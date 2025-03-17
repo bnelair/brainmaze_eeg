@@ -1,0 +1,11 @@
+setuptools
+setuptools_scm
+numpy
+scipy
+pandas
+
+
+
+
+
+
