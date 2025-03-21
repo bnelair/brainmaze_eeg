@@ -1,10 +1,6 @@
 EEG Wave Detection and Analysis
 ====================================
 
-
-Project: EEG Slow Wave Detection and Analysis
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
 This project was published in the following paper:
  |
  | Carvalho DZ, Kremen V, Mivalt F, St Louis EK, McCarter SJ, Bukartyk J, Przybelski SA, Kamykowski MG, Spychalla AJ, Machulda MM, Boeve BF, Petersen RC, Jack CR Jr, Lowe VJ, Graff-Radford J, Worrell GA, Somers VK, Varga AW, Vemuri P. Non-rapid eye movement sleep slow-wave activity features are associated with amyloid accumulation in older adults with obstructive sleep apnoea. Brain Commun. 2024 Oct 7;6(5):fcae354. doi: 10.1093/braincomms/fcae354. PMID: 39429245; PMCID: PMC11487750.
