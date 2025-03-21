@@ -1,8 +1,23 @@
-setuptools
+
+setuptools>=61
 setuptools_scm
+
+sphinx
+sphinx_book_theme
+
+brainmaze_utils
+pytest
 numpy
-scipy
 pandas
+pytz
+python-dateutil
+scikit-learn
+scipy
+tqdm
+
+
+
+
 
 
 
