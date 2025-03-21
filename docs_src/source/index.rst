@@ -3,7 +3,7 @@ BrainMaze - Utils
 
 .. include:: rdm.rst
 
-.. include:: brainmaze_utils.rst
+.. include:: brainmaze_eeg.rst
    
 
 

@@ -3,12 +3,10 @@
    :maxdepth: 3
    :caption: Modules
 
-   files
-   signal
-   stat
-   types
-   vector
-   annotations
-
+   classifiers
+   crp
+   hypnogram
+   scikit_modules
+   features
 
 
