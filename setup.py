@@ -25,7 +25,6 @@ if os.path.exists('requirements.txt'):
         REQUIRED = f.read().splitlines()
 
 
-
 setuptools.setup(
     name=NAME,
     use_scm_version=True,
