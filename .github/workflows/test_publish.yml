@@ -64,7 +64,7 @@ jobs:
 
     - name: Print package version
       run:
-        python -c "import brainmaze_utils; print(brainmaze_utils.__version__)"
+        python -c "import brainmaze_eeg; print(brainmaze_eeg.__version__)"
 
     - name: Test package
       run:
