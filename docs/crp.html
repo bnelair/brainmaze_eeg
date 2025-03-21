@@ -36,7 +36,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=89008013"></script>
+    <script src="_static/documentation_options.js?v=e8fe3c37"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
@@ -163,7 +163,11 @@
                 </a>
             </li>
         </ul>
-        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Modules</span></p>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Projects</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="project_wave_detector.html">EEG Wave Detection and Analysis</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Modules</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="classifiers.html">Classifiers</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">CRP</a></li>
@@ -317,7 +321,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -333,6 +339,17 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.crp.ccep_proj"><code class="docutils literal notranslate"><span class="pre">ccep_proj()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.crp.crp_method"><code class="docutils literal notranslate"><span class="pre">crp_method()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.crp.get_stat_indices"><code class="docutils literal notranslate"><span class="pre">get_stat_indices()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.crp.kt_pca"><code class="docutils literal notranslate"><span class="pre">kt_pca()</span></code></a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -342,8 +359,104 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="crp">
-<h1>CRP<a class="headerlink" href="#crp" title="Link to this heading">#</a></h1>
+  <section id="module-brainmaze_eeg.crp">
+<span id="crp"></span><h1>CRP<a class="headerlink" href="#module-brainmaze_eeg.crp" title="Link to this heading">#</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.crp.ccep_proj">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.crp.</span></span><span class="sig-name descname"><span class="pre">ccep_proj</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">V</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.crp.ccep_proj" title="Link to this definition">#</a></dt>
+<dd><p>Perform projections of each trial onto all other trials, and return the internal projections.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>V</strong> (<em>numpy.ndarray</em>) – The input matrix of shape (M, N), collector of trials (each trial is a column).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The calculated internal projections vector after removing self-projections.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.crp.crp_method">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.crp.</span></span><span class="sig-name descname"><span class="pre">crp_method</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_win</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prune_the_data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.crp.crp_method" title="Link to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>v</strong> – ndarray
+Voltage matrix of shape (n_samples, n_channels).</p></li>
+<li><p><strong>t_win</strong> – ndarray
+Time array of shape (n_samples,) representing the time window.</p></li>
+<li><p><strong>prune_the_data</strong> – bool
+Flag indicating whether to prune the data or not.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple
+Tuple containing the output parameters and projections.</p>
+</dd>
+</dl>
+<p>The function <cite>crp_method</cite> implements the Canonical Response Parametrization (CRP) method for ERP analysis of brain electrophysiology data. It takes in a voltage matrix <cite>v</cite>, a time array <cite>t_win</cite>, and a flag <cite>prune_the_data
+*</cite>. It returns a tuple containing the output parameters and projections. Note that the methodology behind this is described in the manuscript:
+“Canonical Response Parametrization: Quantifying the structure of responses to single-pulse intracranial electrical brain stimulation”
+by Kai J. Miller, et al., 2022. Python implementation by Vaclav Kremen, 1/2024 version 1.0.</p>
+<p>The voltage matrix <cite>v</cite> is a 2D ndarray of shape <cite>(n_samples, n_channels)</cite>, where <cite>n_samples</cite> is the number of samples and <cite>n_channels</cite> is the number of channels.</p>
+<p>The time array <cite>t_win</cite> is a 1D ndarray of shape <cite>(n_samples,)</cite> representing the time window.</p>
+<p>The flag <cite>prune_the_data</cite> is a boolean indicating whether to prune the data or not.</p>
+<p>The function performs the following steps:</p>
+<ol class="arabic simple">
+<li><p>Calculates the sampling rate based on the time window.</p></li>
+<li><p>Calculates sets of normalized single stimulation cross-projection magnitudes using a specified time step.</p></li>
+</ol>
+<p>3. Parameterizes the trials by reducing the voltage matrix to the response duration, performing kernel trick PCA to capture structure, and calculating the first principal component and
+* residual epsilon.
+4. Returns the projections data, including projection timepoints, mean and variance of projection profiles, response duration index, average and standard deviation of input traces.
+5. Calculates significance statistics, such as the t-value and p-value at the response duration and full time sent in.
+6. Returns the parameterization data, including the reduced voltage matrix, alpha coefficient weights, canonical shape, residual epsilon, response time, parameter timepoints, average
+* and standard deviation of response traces, alpha coefficient weights normalized by the square root of the length of C, and the square root of the diagonal elements of ep.T &#64; ep.
+7. Calculates extracted single-trial quantities, such as signal-to-noise ratio (Vsnr) and explained variance (expl_var) for each trial.
+8. Optionally prunes the data if requested, by removing trials that are too far from the given template and outliers.
+9. Returns the final output parameters and projections.</p>
+<p>Example usage:
+<a href="#id1"><span class="problematic" id="id2">``</span></a><a href="#id3"><span class="problematic" id="id4">`</span></a>python
+v = np.zeros((10, 1000))
+t_win = np.arange(0, 1000/fs, 1/fs)
+prune_the_data = True</p>
+<p>crp_parameters, crp_projections = crp_method(v, t_win, prune_the_data)
+<a href="#id5"><span class="problematic" id="id6">``</span></a><a href="#id7"><span class="problematic" id="id8">`</span></a></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.crp.get_stat_indices">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.crp.</span></span><span class="sig-name descname"><span class="pre">get_stat_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">N</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.crp.get_stat_indices" title="Link to this definition">#</a></dt>
+<dd><p>This function picks out the indices of S that can be used for statistical comparison.
+For each trial, half of normalized projections to other trials are used,
+and the other half of trials are the projected into ones. No overlapping comparison pairs are used.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>N</strong> – Scalar - number of trials</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>stat_indices (N^2-N,1) - Vector of indices to be used for statistical comparison</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.crp.kt_pca">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.crp.</span></span><span class="sig-name descname"><span class="pre">kt_pca</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.crp.kt_pca" title="Link to this definition">#</a></dt>
+<dd><p>This is an implementation of the linear kernel PCA method (“kernel trick”)
+described in “Kernel PCA Pattern Reconstruction via Approximate Pre-Images”
+by Scholkopf et al., ICANN, 1998, pp 147-15.</p>
+<p>param: X - Matrix of data in. Only need this trick if T&gt;&gt;N</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>E, S - Eigenvectors and Eigenvalues of X in descending order</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -381,6 +494,24 @@ document.write(`
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.crp.ccep_proj"><code class="docutils literal notranslate"><span class="pre">ccep_proj()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.crp.crp_method"><code class="docutils literal notranslate"><span class="pre">crp_method()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.crp.get_stat_indices"><code class="docutils literal notranslate"><span class="pre">get_stat_indices()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.crp.kt_pca"><code class="docutils literal notranslate"><span class="pre">kt_pca()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

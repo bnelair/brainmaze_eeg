@@ -36,7 +36,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=89008013"></script>
+    <script src="_static/documentation_options.js?v=e8fe3c37"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
@@ -44,7 +44,7 @@
     <link rel="icon" href="_static/brainmaze_173x173.png"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Classifiers" href="classifiers.html" />
+    <link rel="next" title="EEG Wave Detection and Analysis" href="project_wave_detector.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -164,7 +164,11 @@
                 </a>
             </li>
         </ul>
-        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Modules</span></p>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Projects</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="project_wave_detector.html">EEG Wave Detection and Analysis</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Modules</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="classifiers.html">Classifiers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="crp.html">CRP</a></li>
@@ -349,9 +353,15 @@ document.write(`
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#license">License</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#acknowledgment">Acknowledgment</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#acknowledgement">Acknowledgement</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#funding">Funding</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#acknowledgment">Acknowledgment</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sleep-classification-and-feature-extraction">Sleep classification and feature extraction</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#evoked-response-potential-analysis">Evoked Response Potential Analysis</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#eeg-slow-wave-detection-and-analysis">EEG Slow Wave Detection and Analysis</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#funding">Funding</a><ul class="nav section-nav flex-column">
+</ul>
+</li>
 </ul>
             </nav>
         </div>
@@ -402,8 +412,7 @@ Documentation source is in docs_src/ and the generated documentation is in docs/
 </section>
 <section id="acknowledgment">
 <h2>Acknowledgment<a class="headerlink" href="#acknowledgment" title="Link to this heading">#</a></h2>
-<p>This code was developed and originally published for the first time with by (Mivalt 2022, and Sladky 2022).
-We appreciate you citing these papers when utilizing this toolbox in further research work.</p>
+<p>This code was developed and originally published for the first time by (Mivalt 2022, and Sladky 2022). Additionally, codes related to individual projects available in this repository are stated below. When using this toolbox, we appreciate you citing the papers related to the utilized functionality. Please, see the sections below for references to individual submodules.</p>
 <blockquote>
 <div><div class="line-block">
 <div class="line">F. Mivalt et V. Kremen et al., “Electrical brain stimulation and continuous behavioral state tracking in ambulatory humans,” J. Neural Eng., vol. 19, no. 1, p. 016019, Feb. 2022, doi: 10.1088/1741-2552/ac4bfd.</div>
@@ -411,20 +420,8 @@ We appreciate you citing these papers when utilizing this toolbox in further res
 <div class="line">V. Sladky et al., “Distributed brain co-processor for tracking spikes, seizures and behaviour during electrical brain stimulation,” Brain Commun., vol. 4, no. 3, May 2022, doi: 10.1093/braincomms/fcac115.</div>
 </div>
 </div></blockquote>
-</section>
-<section id="acknowledgement">
-<h2>Acknowledgement<a class="headerlink" href="#acknowledgement" title="Link to this heading">#</a></h2>
-<p>BEST was developed and originally published for the first time with by (Mivalt 2022, and Sladky 2022).
-Additionally, codes related to individual projects available in this repository are stated below.</p>
-<p>We apreciate you citing these papers when utilizing this toolbox in further research work.</p>
-<blockquote>
-<div><div class="line-block">
-<div class="line">F. Mivalt et V. Kremen et al., “Electrical brain stimulation and continuous behavioral state tracking in ambulatory humans,” J. Neural Eng., vol. 19, no. 1, p. 016019, Feb. 2022, doi: 10.1088/1741-2552/ac4bfd.</div>
-<div class="line"><br /></div>
-<div class="line">V. Sladky et al., “Distributed brain co-processor for tracking spikes, seizures and behaviour during electrical brain stimulation,” Brain Commun., vol. 4, no. 3, May 2022, doi: 10.1093/braincomms/fcac115.</div>
-</div>
-</div></blockquote>
-<p>Please, see the sections below for references to individual submodules.</p>
+<section id="sleep-classification-and-feature-extraction">
+<h3>Sleep classification and feature extraction<a class="headerlink" href="#sleep-classification-and-feature-extraction" title="Link to this heading">#</a></h3>
 <blockquote>
 <div><div class="line-block">
 <div class="line">F. Mivalt et V. Kremen et al., “Electrical brain stimulation and continuous behavioral state tracking in ambulatory humans,” J. Neural Eng., vol. 19, no. 1, p. 016019, Feb. 2022, doi: 10.1088/1741-2552/ac4bfd.</div>
@@ -442,17 +439,24 @@ Additionally, codes related to individual projects available in this repository 
 <div class="line">Kremen, V., Duque, J. J., Brinkmann, B. H., Berry, B. M., Kucewicz, M. T., Khadjevand, F., G.A. Worrell, G. A. (2017). Behavioral state classification in epileptic brain using intracranial electrophysiology. Journal of Neural Engineering, 14(2), 026001. <a class="reference external" href="https://doi.org/10.1088/1741-2552/aa5688">https://doi.org/10.1088/1741-2552/aa5688</a></div>
 </div>
 </div></blockquote>
+</section>
+<section id="evoked-response-potential-analysis">
+<h3>Evoked Response Potential Analysis<a class="headerlink" href="#evoked-response-potential-analysis" title="Link to this heading">#</a></h3>
 <blockquote>
 <div><div class="line-block">
 <div class="line">K. J. Miller et al., “Canonical Response Parameterization: Quantifying the structure of responses to single-pulse intracranial electrical brain stimulation,” PLOS Comput. Biol., vol. 19, no. 5, p. e1011105, May 2023, doi: 10.1371/journal.pcbi.1011105.</div>
 </div>
 </div></blockquote>
-<p>Readme to the EEG Slow Detection project available in this repository in this repository: <a class="reference external" href="https://github.com/bnelair/best-toolbox/blob/master/projects/slow_wave_detection/readme.rst">projects/slow_wave_detection/readme</a>.</p>
+</section>
+<section id="eeg-slow-wave-detection-and-analysis">
+<h3>EEG Slow Wave Detection and Analysis<a class="headerlink" href="#eeg-slow-wave-detection-and-analysis" title="Link to this heading">#</a></h3>
 <blockquote>
 <div><div class="line-block">
 <div class="line">Carvalho DZ, Kremen V, Mivalt F, St Louis EK, McCarter SJ, Bukartyk J, Przybelski SA, Kamykowski MG, Spychalla AJ, Machulda MM, Boeve BF, Petersen RC, Jack CR Jr, Lowe VJ, Graff-Radford J, Worrell GA, Somers VK, Varga AW, Vemuri P. Non-rapid eye movement sleep slow-wave activity features are associated with amyloid accumulation in older adults with obstructive sleep apnoea. Brain Commun. 2024 Oct 7;6(5):fcae354. doi: 10.1093/braincomms/fcae354. PMID: 39429245; PMCID: PMC11487750.</div>
 </div>
 </div></blockquote>
+<p>Readme to the EEG Slow Detection project available in this repository in this repository: <a class="reference external" href="https://github.com/bnelair/best-toolbox/blob/master/projects/slow_wave_detection/readme.rst">projects/slow_wave_detection/readme</a>.</p>
+</section>
 </section>
 <section id="funding">
 <h2>Funding<a class="headerlink" href="#funding" title="Link to this heading">#</a></h2>
@@ -464,18 +468,46 @@ Additionally, codes related to individual projects available in this repository 
 <li><p>FEKT-K-22-7649 realized within the project Quality Internal Grants of the Brno University of Technology (KInG BUT), Reg. No. CZ.02.2.69/0.0/0.0/19_073/0016948, which is financed from the OP RDE.</p></li>
 </ul>
 <div class="toctree-wrapper compound">
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Projects</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="project_wave_detector.html">EEG Wave Detection and Analysis</a></li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Modules</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="classifiers.html">Classifiers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="crp.html">CRP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="crp.html">CRP</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="crp.html#brainmaze_eeg.crp.ccep_proj"><code class="docutils literal notranslate"><span class="pre">ccep_proj()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="crp.html#brainmaze_eeg.crp.crp_method"><code class="docutils literal notranslate"><span class="pre">crp_method()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="crp.html#brainmaze_eeg.crp.get_stat_indices"><code class="docutils literal notranslate"><span class="pre">get_stat_indices()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="crp.html#brainmaze_eeg.crp.kt_pca"><code class="docutils literal notranslate"><span class="pre">kt_pca()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="hypnogram.html">Hypnogram</a></li>
 <li class="toctree-l1"><a class="reference internal" href="scikit_modules.html">Scikit Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="features.html">Annotations</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="features.feature_extractor.html">Feature Extractor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="features.spectral_features.html">Spectral Features</a></li>
-<li class="toctree-l2"><a class="reference internal" href="features.time_domain_features.html">Time Domain Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.spectral_features.html">Spectral Features</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features.spectral_features.html#brainmaze_eeg.features.spectral_features.mean_bands"><code class="docutils literal notranslate"><span class="pre">mean_bands()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.spectral_features.html#brainmaze_eeg.features.spectral_features.mean_frequency"><code class="docutils literal notranslate"><span class="pre">mean_frequency()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.spectral_features.html#brainmaze_eeg.features.spectral_features.median_frequency"><code class="docutils literal notranslate"><span class="pre">median_frequency()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.spectral_features.html#brainmaze_eeg.features.spectral_features.non_normalized_entropy"><code class="docutils literal notranslate"><span class="pre">non_normalized_entropy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.spectral_features.html#brainmaze_eeg.features.spectral_features.non_normalized_entropy_bands"><code class="docutils literal notranslate"><span class="pre">non_normalized_entropy_bands()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.spectral_features.html#brainmaze_eeg.features.spectral_features.normalized_entropy"><code class="docutils literal notranslate"><span class="pre">normalized_entropy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.spectral_features.html#brainmaze_eeg.features.spectral_features.normalized_entropy_bands"><code class="docutils literal notranslate"><span class="pre">normalized_entropy_bands()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.spectral_features.html#brainmaze_eeg.features.spectral_features.relative_bands"><code class="docutils literal notranslate"><span class="pre">relative_bands()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="features.time_domain_features.html">Time Domain Features</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features.time_domain_features.html#brainmaze_eeg.features.time_domain_features.tkeo"><code class="docutils literal notranslate"><span class="pre">tkeo()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="features.utils.html">Utils</a></li>
-<li class="toctree-l2"><a class="reference internal" href="features.wave_detector.html">Wave Detector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.wave_detector.html">Wave Detector</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features.wave_detector.html#brainmaze_eeg.features.wave_detector.WaveDetector"><code class="docutils literal notranslate"><span class="pre">WaveDetector</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -495,11 +527,11 @@ Additionally, codes related to individual projects available in this repository 
                   
 <div class="prev-next-area">
     <a class="right-next"
-       href="classifiers.html"
+       href="project_wave_detector.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Classifiers</p>
+        <p class="prev-next-title">EEG Wave Detection and Analysis</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -527,9 +559,15 @@ Additionally, codes related to individual projects available in this repository 
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#license">License</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#acknowledgment">Acknowledgment</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#acknowledgement">Acknowledgement</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#funding">Funding</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#acknowledgment">Acknowledgment</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sleep-classification-and-feature-extraction">Sleep classification and feature extraction</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#evoked-response-potential-analysis">Evoked Response Potential Analysis</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#eeg-slow-wave-detection-and-analysis">EEG Slow Wave Detection and Analysis</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#funding">Funding</a><ul class="nav section-nav flex-column">
+</ul>
+</li>
 </ul>
   </nav></div>
 

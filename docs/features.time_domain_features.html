@@ -36,7 +36,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=89008013"></script>
+    <script src="_static/documentation_options.js?v=e8fe3c37"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
@@ -163,7 +163,11 @@
                 </a>
             </li>
         </ul>
-        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Modules</span></p>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Projects</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="project_wave_detector.html">EEG Wave Detection and Analysis</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Modules</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="classifiers.html">Classifiers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="crp.html">CRP</a></li>
@@ -317,7 +321,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -333,6 +339,14 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.features.time_domain_features.tkeo"><code class="docutils literal notranslate"><span class="pre">tkeo()</span></code></a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -342,8 +356,22 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="time-domain-features">
-<h1>Time Domain Features<a class="headerlink" href="#time-domain-features" title="Link to this heading">#</a></h1>
+  <section id="module-brainmaze_eeg.features.time_domain_features">
+<span id="time-domain-features"></span><h1>Time Domain Features<a class="headerlink" href="#module-brainmaze_eeg.features.time_domain_features" title="Link to this heading">#</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.features.time_domain_features.tkeo">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.features.time_domain_features.</span></span><span class="sig-name descname"><span class="pre">tkeo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.features.time_domain_features.tkeo" title="Link to this definition">#</a></dt>
+<dd><p>Teager-Kaiser Energy Operator</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> – numpy ndarray</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>numpy ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -381,6 +409,21 @@ document.write(`
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.features.time_domain_features.tkeo"><code class="docutils literal notranslate"><span class="pre">tkeo()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

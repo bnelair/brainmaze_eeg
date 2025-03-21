@@ -36,12 +36,12 @@ from sklearn.naive_bayes import GaussianNB
 # from best.feature_extraction.FeatureExtractor import SleepSpectralFeatureExtractor
 # from best.feature_extraction.SpectralFeatures import mean_bands, mean_frequency, relative_bands
 
-from brainmaze_features.feature_extraction.FeatureExtractor import SleepSpectralFeatureExtractor
-from brainmaze_features.feature_extraction.SpectralFeatures import mean_bands, mean_frequency, relative_bands
-from brainmaze_features.utils import augment_features, balance_classes
-from brainmaze_utils.scikit_modules import PCAModule, ZScoreModule
+from brainmaze_eeg.features.feature_extraction.FeatureExtractor import SleepSpectralFeatureExtractor
+from brainmaze_eeg.features.feature_extraction.SpectralFeatures import mean_bands, mean_frequency, relative_bands
+from brainmaze_eeg.features.utils import augment_features, balance_classes
+from brainmaze_eeg.scikit_modules import PCAModule, ZScoreModule
 from brainmaze_utils.signal import unify_sampling_frequency, get_datarate, buffer
-from brainmaze_annotations.utils import time_to_utc, merge_annotations, time_to_timestamp
+from brainmaze_utils.annotations.utils import time_to_utc, merge_annotations, time_to_timestamp
 from brainmaze_utils.stat import kl_divergence_nonparametric
 from brainmaze_utils.vector import scale, get_mutual_vectors, translate
 

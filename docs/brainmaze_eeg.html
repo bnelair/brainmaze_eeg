@@ -36,7 +36,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=89008013"></script>
+    <script src="_static/documentation_options.js?v=e8fe3c37"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
@@ -163,7 +163,11 @@
                 </a>
             </li>
         </ul>
-        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Modules</span></p>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Projects</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="project_wave_detector.html">EEG Wave Detection and Analysis</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Modules</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="classifiers.html">Classifiers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="crp.html">CRP</a></li>
@@ -335,6 +339,14 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+</ul>
+
+            </nav>
         </div>
     </div>
 </div>
@@ -345,18 +357,46 @@ document.write(`
                 <article class="bd-article">
                   
   <div class="toctree-wrapper compound">
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Projects</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="project_wave_detector.html">EEG Wave Detection and Analysis</a></li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Modules</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="classifiers.html">Classifiers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="crp.html">CRP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="crp.html">CRP</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="crp.html#brainmaze_eeg.crp.ccep_proj"><code class="docutils literal notranslate"><span class="pre">ccep_proj()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="crp.html#brainmaze_eeg.crp.crp_method"><code class="docutils literal notranslate"><span class="pre">crp_method()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="crp.html#brainmaze_eeg.crp.get_stat_indices"><code class="docutils literal notranslate"><span class="pre">get_stat_indices()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="crp.html#brainmaze_eeg.crp.kt_pca"><code class="docutils literal notranslate"><span class="pre">kt_pca()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="hypnogram.html">Hypnogram</a></li>
 <li class="toctree-l1"><a class="reference internal" href="scikit_modules.html">Scikit Modules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="features.html">Annotations</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="features.feature_extractor.html">Feature Extractor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="features.spectral_features.html">Spectral Features</a></li>
-<li class="toctree-l2"><a class="reference internal" href="features.time_domain_features.html">Time Domain Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.spectral_features.html">Spectral Features</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features.spectral_features.html#brainmaze_eeg.features.spectral_features.mean_bands"><code class="docutils literal notranslate"><span class="pre">mean_bands()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.spectral_features.html#brainmaze_eeg.features.spectral_features.mean_frequency"><code class="docutils literal notranslate"><span class="pre">mean_frequency()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.spectral_features.html#brainmaze_eeg.features.spectral_features.median_frequency"><code class="docutils literal notranslate"><span class="pre">median_frequency()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.spectral_features.html#brainmaze_eeg.features.spectral_features.non_normalized_entropy"><code class="docutils literal notranslate"><span class="pre">non_normalized_entropy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.spectral_features.html#brainmaze_eeg.features.spectral_features.non_normalized_entropy_bands"><code class="docutils literal notranslate"><span class="pre">non_normalized_entropy_bands()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.spectral_features.html#brainmaze_eeg.features.spectral_features.normalized_entropy"><code class="docutils literal notranslate"><span class="pre">normalized_entropy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.spectral_features.html#brainmaze_eeg.features.spectral_features.normalized_entropy_bands"><code class="docutils literal notranslate"><span class="pre">normalized_entropy_bands()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="features.spectral_features.html#brainmaze_eeg.features.spectral_features.relative_bands"><code class="docutils literal notranslate"><span class="pre">relative_bands()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="features.time_domain_features.html">Time Domain Features</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features.time_domain_features.html#brainmaze_eeg.features.time_domain_features.tkeo"><code class="docutils literal notranslate"><span class="pre">tkeo()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="features.utils.html">Utils</a></li>
-<li class="toctree-l2"><a class="reference internal" href="features.wave_detector.html">Wave Detector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.wave_detector.html">Wave Detector</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="features.wave_detector.html#brainmaze_eeg.features.wave_detector.WaveDetector"><code class="docutils literal notranslate"><span class="pre">WaveDetector</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -379,6 +419,21 @@ document.write(`
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+</ul>
+
+  </nav></div>
+
+</div></div>
               
             
           </div>

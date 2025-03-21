@@ -36,7 +36,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=89008013"></script>
+    <script src="_static/documentation_options.js?v=e8fe3c37"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
@@ -162,7 +162,11 @@
                 </a>
             </li>
         </ul>
-        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Modules</span></p>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Projects</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="project_wave_detector.html">EEG Wave Detection and Analysis</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Modules</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="classifiers.html">Classifiers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="crp.html">CRP</a></li>
@@ -316,7 +320,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -332,6 +338,23 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.features.wave_detector.WaveDetector"><code class="docutils literal notranslate"><span class="pre">WaveDetector</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.features.wave_detector.WaveDetector.delta_t_stats"><code class="docutils literal notranslate"><span class="pre">WaveDetector.delta_t_stats()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.features.wave_detector.WaveDetector.detect_waves"><code class="docutils literal notranslate"><span class="pre">WaveDetector.detect_waves()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.features.wave_detector.WaveDetector.max_stats"><code class="docutils literal notranslate"><span class="pre">WaveDetector.max_stats()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.features.wave_detector.WaveDetector.min_stats"><code class="docutils literal notranslate"><span class="pre">WaveDetector.min_stats()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.features.wave_detector.WaveDetector.pk2pk_stats"><code class="docutils literal notranslate"><span class="pre">WaveDetector.pk2pk_stats()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.features.wave_detector.WaveDetector.slope_stats"><code class="docutils literal notranslate"><span class="pre">WaveDetector.slope_stats()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.features.wave_detector.WaveDetector.stat"><code class="docutils literal notranslate"><span class="pre">WaveDetector.stat()</span></code></a></li>
+</ul>
+</li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -341,8 +364,98 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="wave-detector">
-<h1>Wave Detector<a class="headerlink" href="#wave-detector" title="Link to this heading">#</a></h1>
+  <section id="module-brainmaze_eeg.features.wave_detector">
+<span id="wave-detector"></span><h1>Wave Detector<a class="headerlink" href="#module-brainmaze_eeg.features.wave_detector" title="Link to this heading">#</a></h1>
+<p>WaveDetector object detects minimums and maximums of waves in a given frequency bandpass. Designed mainly to detect slow (delta - 0.5 - 4 Hz) waves. WaveDetector can also return statistical report of detected waves such as Δt, slope, peak2peak and min and max values.</p>
+<p class="rubric">Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sleep_classification.WaveDetector</span><span class="w"> </span><span class="kn">import</span> <span class="n">WaveDetector</span>
+
+<span class="n">fs</span> <span class="o">=</span> <span class="mi">200</span>
+<span class="n">signal_length</span> <span class="o">=</span> <span class="mi">5</span> <span class="c1"># s</span>
+<span class="n">wave_freq1</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">wave_freq2</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">noise_level</span> <span class="o">=</span> <span class="mf">0.5</span>
+
+<span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">signal_length</span> <span class="o">*</span> <span class="n">fs</span><span class="p">)</span> <span class="o">/</span> <span class="n">fs</span>
+<span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="n">noise_level</span>
+<span class="n">x1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">wave_freq1</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span>
+<span class="n">x2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">wave_freq2</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span>
+<span class="n">x_noise</span> <span class="o">=</span> <span class="n">x1</span> <span class="o">+</span> <span class="n">x2</span> <span class="o">+</span> <span class="n">noise</span>
+
+<span class="n">WDet</span> <span class="o">=</span> <span class="n">WaveDetector</span><span class="p">(</span><span class="n">fs</span><span class="o">=</span><span class="n">fs</span><span class="p">,</span> <span class="n">cutoff_low</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">cutoff_high</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="n">stats</span><span class="p">,</span> <span class="n">det</span> <span class="o">=</span> <span class="n">WDet</span><span class="p">(</span><span class="n">x_noise</span><span class="p">)</span>
+<span class="n">min_pos</span> <span class="o">=</span> <span class="n">det</span><span class="p">[</span><span class="s1">&#39;min_pos&#39;</span><span class="p">]</span>
+<span class="n">min_val</span> <span class="o">=</span> <span class="n">det</span><span class="p">[</span><span class="s1">&#39;min_val&#39;</span><span class="p">]</span>
+<span class="n">max_pos</span> <span class="o">=</span> <span class="n">det</span><span class="p">[</span><span class="s1">&#39;max_pos&#39;</span><span class="p">]</span>
+<span class="n">max_val</span> <span class="o">=</span> <span class="n">det</span><span class="p">[</span><span class="s1">&#39;max_val&#39;</span><span class="p">]</span>
+
+<span class="c1">#plt.plot(t, x_noise)</span>
+<span class="c1">#plt.xlabel(&#39;t [s]&#39;)</span>
+<span class="c1">#plt.title(&#39;Original&#39;)</span>
+<span class="c1">#plt.show()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">x_noise</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">stem</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">min_pos</span><span class="p">],</span> <span class="n">min_val</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">stem</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">max_pos</span><span class="p">],</span> <span class="n">max_val</span><span class="p">,</span> <span class="s1">&#39;k&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Detections&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Slope Stats&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;slope_stats&#39;</span><span class="p">])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Peak2Peak Stats&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;pk2pk_stats&#39;</span><span class="p">])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;delta_t Stats&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;delta_t_stats&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../../_images/1_det.png"><img alt="../../_images/1_det.png" src="../../_images/1_det.png" style="width: 300px;" />
+</a>
+<dl class="py class">
+<dt class="sig sig-object py" id="brainmaze_eeg.features.wave_detector.WaveDetector">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.features.wave_detector.</span></span><span class="sig-name descname"><span class="pre">WaveDetector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff_low</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff_high</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.features.wave_detector.WaveDetector" title="Link to this definition">#</a></dt>
+<dd><p>Designed for Delta wave detection. Can be deployed on any frequency range. See the documentation above for an usage example.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="brainmaze_eeg.features.wave_detector.WaveDetector.delta_t_stats">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">delta_t_stats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_pos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_vals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_pos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_vals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.features.wave_detector.WaveDetector.delta_t_stats" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brainmaze_eeg.features.wave_detector.WaveDetector.detect_waves">
+<span class="sig-name descname"><span class="pre">detect_waves</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.features.wave_detector.WaveDetector.detect_waves" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brainmaze_eeg.features.wave_detector.WaveDetector.max_stats">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">max_stats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_pos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_vals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_pos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_vals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.features.wave_detector.WaveDetector.max_stats" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brainmaze_eeg.features.wave_detector.WaveDetector.min_stats">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">min_stats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_pos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_vals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_pos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_vals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.features.wave_detector.WaveDetector.min_stats" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brainmaze_eeg.features.wave_detector.WaveDetector.pk2pk_stats">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pk2pk_stats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_pos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_vals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_pos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_vals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.features.wave_detector.WaveDetector.pk2pk_stats" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brainmaze_eeg.features.wave_detector.WaveDetector.slope_stats">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">slope_stats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_pos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_vals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_pos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_vals</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.features.wave_detector.WaveDetector.slope_stats" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="brainmaze_eeg.features.wave_detector.WaveDetector.stat">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">stat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.features.wave_detector.WaveDetector.stat" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 
 
@@ -371,6 +484,30 @@ document.write(`
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.features.wave_detector.WaveDetector"><code class="docutils literal notranslate"><span class="pre">WaveDetector</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.features.wave_detector.WaveDetector.delta_t_stats"><code class="docutils literal notranslate"><span class="pre">WaveDetector.delta_t_stats()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.features.wave_detector.WaveDetector.detect_waves"><code class="docutils literal notranslate"><span class="pre">WaveDetector.detect_waves()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.features.wave_detector.WaveDetector.max_stats"><code class="docutils literal notranslate"><span class="pre">WaveDetector.max_stats()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.features.wave_detector.WaveDetector.min_stats"><code class="docutils literal notranslate"><span class="pre">WaveDetector.min_stats()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.features.wave_detector.WaveDetector.pk2pk_stats"><code class="docutils literal notranslate"><span class="pre">WaveDetector.pk2pk_stats()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.features.wave_detector.WaveDetector.slope_stats"><code class="docutils literal notranslate"><span class="pre">WaveDetector.slope_stats()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.features.wave_detector.WaveDetector.stat"><code class="docutils literal notranslate"><span class="pre">WaveDetector.stat()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>
