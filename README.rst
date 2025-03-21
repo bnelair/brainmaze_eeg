@@ -45,7 +45,7 @@ If updating the docs web generated using sphinx, there might be a lot of changes
 License
 """"""""""""""""""
 
-This software is licensed under BSD-3Clause license. For details see the `LICENSE <https://github.com/bnelair/brainmaze_utils/blob/master/LICENSE>`_ file in the root directory of this project.
+This software is licensed under BSD-3Clause license. For details see the `LICENSE <https://github.com/bnelair/brainmaze_eeg/blob/master/LICENSE>`_ file in the root directory of this project.
 
 
 Acknowledgment
@@ -78,7 +78,7 @@ EEG Slow Wave Detection and Analysis
 '''''''''''''''''''''''''''''''''''''''''''''''
  | Carvalho DZ, Kremen V, Mivalt F, St Louis EK, McCarter SJ, Bukartyk J, Przybelski SA, Kamykowski MG, Spychalla AJ, Machulda MM, Boeve BF, Petersen RC, Jack CR Jr, Lowe VJ, Graff-Radford J, Worrell GA, Somers VK, Varga AW, Vemuri P. Non-rapid eye movement sleep slow-wave activity features are associated with amyloid accumulation in older adults with obstructive sleep apnoea. Brain Commun. 2024 Oct 7;6(5):fcae354. doi: 10.1093/braincomms/fcae354. PMID: 39429245; PMCID: PMC11487750.
 
-Readme to the EEG Slow Detection project available in this repository in this repository: `projects/slow_wave_detection/readme <https://github.com/bnelair/best-toolbox/blob/master/projects/slow_wave_detection/readme.rst>`_.
+Readme to the EEG Slow Detection project available in this repository in the `documentation <https://bnelair.github.io/brainmaze_eeg/project_wave_detector.html>`_. A single file example with sample data is available `here <https://github.com/bnelair/brainmaze_eeg/tree/main/demo/eeg_wave_detection>`_.
 
 
 Funding
