@@ -25,31 +25,32 @@ if os.path.exists('requirements.txt'):
         REQUIRED = f.read().splitlines()
 
 
+
 setuptools.setup(
     name=NAME,
     use_scm_version=True,
+    setup_requires=['setuptools>=61', 'setuptools_scm'],
+
     description=DESCRIPTION,
     author=AUTHOR,
     author_email=EMAIL,
     url=URL,
     license="BSD-3-Clause",
-
     long_description=LONG_DESCRIPTION,
     long_description_content_type='text/x-rst',
 
-    packages=setuptools.find_packages(),
+    packages=setuptools.find_packages(exclude=["tests*"]),
     include_package_data=True,
 
     classifiers=[
-
         'Topic :: Scientific/Engineering :: Medical Science Apps.',
         "Development Status :: 3 - Alpha",
-
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
 
         'Operating System :: OS Independent',
         "License :: OSI Approved :: BSD License",
