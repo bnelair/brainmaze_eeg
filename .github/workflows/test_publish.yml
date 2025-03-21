@@ -1,0 +1,118 @@
+name: Test brainmaze-utils
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        include:
+            - os: ubuntu-latest
+              python-version: '3.9'
+              architecture: 'x64'
+            - os: ubuntu-latest
+              python-version: '3.10'
+              architecture: 'x64'
+            - os: ubuntu-latest
+              python-version: '3.11'
+              architecture: 'x64'
+            - os: ubuntu-latest
+              python-version: '3.12'
+              architecture: 'x64'
+
+            - os: macos-latest
+              python-version: '3.12'
+
+            - os: windows-latest
+              python-version: '3.12'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Checkout submodules
+      shell: bash
+      run: |
+        auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+        git submodule sync --recursive
+        git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+        
+    - name: List tags
+      run: git tag
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install setuptools>=61 setuptools_scm build
+
+    - name: Setup package
+      run:
+        python -m build
+
+    - name: Install package
+      run:
+        pip install .
+
+    - name: Print package version
+      run:
+        python -c "import brainmaze_utils; print(brainmaze_utils.__version__)"
+
+    - name: Test package
+      run:
+        python -m pytest
+
+  release:
+    if: contains(github.ref, 'refs/tags/')
+    needs: test
+
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        include:
+            - os: ubuntu-latest
+              python-version: '3.11'
+              docker_python_version: 'cp36-cp36m'
+    steps:
+
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Checkout submodules
+      shell: bash
+      run: |
+        auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+        git submodule sync --recursive
+        git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+    # Set up python after manylinux build otherwise it interferes with auditwheel in the image
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version:  ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install setuptools>=61 setuptools_scm build
+        pip install twine
+    - name: Setup package
+      run:
+        python -m build
+
+    - name: Publish package
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.PYPI_Token_General }}
+      run: |
+        twine upload --skip-existing dist/*

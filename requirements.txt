@@ -1,8 +1,17 @@
-setuptools
-setuptools_scm
 numpy
+setuptools>=61
+setuptools_scm
 scipy
 pandas
+pytz
+python-dateutil
+pytest
+sphinx
+sphinx_book_theme
+scikit-learn
+
+
+
 
 
 
