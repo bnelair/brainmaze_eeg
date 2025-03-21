@@ -25,7 +25,6 @@ from sklearn import preprocessing
 from sklearn.metrics import cohen_kappa_score, roc_curve
 from sklearn.naive_bayes import GaussianNB
 
-
 # from best.annotations.utils import time_to_timestamp, time_to_utc, merge_annotations
 # from best.feature import augment_features, balance_classes
 # from best.signal import unify_sampling_frequency, get_datarate, buffer
@@ -36,8 +35,8 @@ from sklearn.naive_bayes import GaussianNB
 # from best.feature_extraction.FeatureExtractor import SleepSpectralFeatureExtractor
 # from best.feature_extraction.SpectralFeatures import mean_bands, mean_frequency, relative_bands
 
-from brainmaze_eeg.features.feature_extraction.FeatureExtractor import SleepSpectralFeatureExtractor
-from brainmaze_eeg.features.feature_extraction.SpectralFeatures import mean_bands, mean_frequency, relative_bands
+from brainmaze_eeg.features.feature_extraction import SleepSpectralFeatureExtractor
+from brainmaze_eeg.features.spectral_features import mean_bands, mean_frequency, relative_bands
 from brainmaze_eeg.features.utils import augment_features, balance_classes
 from brainmaze_eeg.scikit_modules import PCAModule, ZScoreModule
 from brainmaze_utils.signal import unify_sampling_frequency, get_datarate, buffer

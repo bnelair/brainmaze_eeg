@@ -1,7 +1,7 @@
 
 import numpy as np
 from sklearn.decomposition import PCA
-from brainmaze_features.utils import augment_features
+from brainmaze_eeg.features.utils import augment_features
 
 """
 Modules compatioble with scikitlearn pipeline

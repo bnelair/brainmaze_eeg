@@ -36,7 +36,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=e8fe3c37"></script>
+    <script src="_static/documentation_options.js?v=5f8c8a40"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
@@ -174,7 +174,8 @@
 <li class="toctree-l1"><a class="reference internal" href="hypnogram.html">Hypnogram</a></li>
 <li class="toctree-l1"><a class="reference internal" href="scikit_modules.html">Scikit Modules</a></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="features.html">Annotations</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="features.feature_extractor.html">Feature Extractor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.dataset.html">Dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="features.feature_extraction.html">Feature Extraction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="features.spectral_features.html">Spectral Features</a></li>
 <li class="toctree-l2"><a class="reference internal" href="features.time_domain_features.html">Time Domain Features</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">Utils</a></li>
@@ -321,7 +322,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -337,6 +340,23 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.features.utils.augment_features"><code class="docutils literal notranslate"><span class="pre">augment_features()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.features.utils.balance_classes"><code class="docutils literal notranslate"><span class="pre">balance_classes()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.features.utils.find_category_outliers"><code class="docutils literal notranslate"><span class="pre">find_category_outliers()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.features.utils.get_class_count"><code class="docutils literal notranslate"><span class="pre">get_class_count()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.features.utils.get_classification_scores"><code class="docutils literal notranslate"><span class="pre">get_classification_scores()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.features.utils.print_classification_scores"><code class="docutils literal notranslate"><span class="pre">print_classification_scores()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.features.utils.remove_features"><code class="docutils literal notranslate"><span class="pre">remove_features()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.features.utils.remove_samples"><code class="docutils literal notranslate"><span class="pre">remove_samples()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.features.utils.replace_annotations"><code class="docutils literal notranslate"><span class="pre">replace_annotations()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.features.utils.zscore"><code class="docutils literal notranslate"><span class="pre">zscore()</span></code></a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -346,8 +366,146 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="utils">
-<h1>Utils<a class="headerlink" href="#utils" title="Link to this heading">#</a></h1>
+  <section id="module-brainmaze_eeg.features.utils">
+<span id="utils"></span><h1>Utils<a class="headerlink" href="#module-brainmaze_eeg.features.utils" title="Link to this heading">#</a></h1>
+<p>Tools for handling features and feature labels during classification, data preparation and evaluation</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.features.utils.augment_features">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.features.utils.</span></span><span class="sig-name descname"><span class="pre">augment_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_indexes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mutual</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operation_str</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.features.utils.augment_features" title="Link to this definition">#</a></dt>
+<dd><p>Augments features with entered operations (mutual - between features such as <code class="docutils literal notranslate"><span class="pre">*</span></code>, <code class="docutils literal notranslate"><span class="pre">/</span></code>, <code class="docutils literal notranslate"><span class="pre">+</span></code>, <code class="docutils literal notranslate"><span class="pre">-</span></code>, ….; non mutual - log, exp, power, …)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>numpy ndarray</em>) – shape[n_samples, n_features]</p></li>
+<li><p><strong>feature_names</strong> (<em>list</em><em> or </em><em>numpy array</em><em> of </em><em>strings</em><em>, </em><em>optional</em>) – names of features</p></li>
+<li><p><strong>feature_indexes</strong> (<em>list</em><em> or </em><em>numpy array</em>) – indexes of features which will be augmented</p></li>
+<li><p><strong>operation</strong> (<em>function</em>) – callable function which will be applied on existing features.</p></li>
+<li><p><strong>mutual</strong> (<em>bool</em>) – indicates whether operation is applied on single feature e.g. np.log10, or on 2 parameters e.g. np.divide
+if mutual = True, then applied on all feature combination specified in feature_indexes</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>numpy ndarray -&gt; shape[n_samples, n_features]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.features.utils.balance_classes">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.features.utils.</span></span><span class="sig-name descname"><span class="pre">balance_classes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">std_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.features.utils.balance_classes" title="Link to this definition">#</a></dt>
+<dd><p>Balances unbalanced classes in dataset by extending the sample array with same samples, possibly with introduced
+noise. Detects classes from y variable and number of samples per category. Duplicates samples from the categories
+with lower number of samples. std_factor gives the level of noise introduced into duplicated samples relatively to
+the std of a given dimension for a given category.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>numpy ndarray</em>) – shape[n_samples, n_features]</p></li>
+<li><p><strong>y</strong> (<em>list</em><em> or </em><em>numpy array</em>) – string or int indexes for each category</p></li>
+<li><p><strong>std_factor</strong> (<em>float</em>) – Amount of noise introduced into duplicated features relatively to std of a given feature within a category.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>numpy ndarray</em> – x - samples</p></li>
+<li><p><em>list</em> – y - categories</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.features.utils.find_category_outliers">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.features.utils.</span></span><span class="sig-name descname"><span class="pre">find_category_outliers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.features.utils.find_category_outliers" title="Link to this definition">#</a></dt>
+<dd><p>Finds outliers for each category within data.
+Check website: <a class="reference external" href="https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.LocalOutlierFactor.html">https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.LocalOutlierFactor.html</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>numpy ndarray</em>) – shape[n_samples, n_features]</p></li>
+<li><p><strong>y</strong> (<em>list</em><em> or </em><em>numpy array</em>) – string or int indexes for each category</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>position index list with detected outliers</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.features.utils.get_class_count">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.features.utils.</span></span><span class="sig-name descname"><span class="pre">get_class_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.features.utils.get_class_count" title="Link to this definition">#</a></dt>
+<dd><p>Returns a number of class appearance in the labels</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.features.utils.get_classification_scores">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.features.utils.</span></span><span class="sig-name descname"><span class="pre">get_classification_scores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">YY</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.features.utils.get_classification_scores" title="Link to this definition">#</a></dt>
+<dd><p>Returns a classification report. All values are already in a formated string.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.features.utils.print_classification_scores">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.features.utils.</span></span><span class="sig-name descname"><span class="pre">print_classification_scores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">YY</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N_merge</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.features.utils.print_classification_scores" title="Link to this definition">#</a></dt>
+<dd><p>Prints classification report for hypnogram scoring labels.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.features.utils.remove_features">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.features.utils.</span></span><span class="sig-name descname"><span class="pre">remove_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_del</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.features.utils.remove_features" title="Link to this definition">#</a></dt>
+<dd><p>Removes features</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>numpy ndarray</em>) – shape[n_samples, n_features]</p></li>
+<li><p><strong>feature_names</strong> (<em>list</em><em> or </em><em>numpy array</em><em>, </em><em>optional</em>) – names of features</p></li>
+<li><p><strong>to_del</strong></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.features.utils.remove_samples">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.features.utils.</span></span><span class="sig-name descname"><span class="pre">remove_samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_del</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.features.utils.remove_samples" title="Link to this definition">#</a></dt>
+<dd><p>Removes samples</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>numpy ndarray / list / pd.DataFrame</em>) – shape[n_samples, n_features]</p></li>
+<li><p><strong>y</strong> (<em>list</em><em> or </em><em>numpy array</em><em>, </em><em>optional</em>) – category reference for each sample</p></li>
+<li><p><strong>to_del</strong></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.features.utils.replace_annotations">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.features.utils.</span></span><span class="sig-name descname"><span class="pre">replace_annotations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">old_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.features.utils.replace_annotations" title="Link to this definition">#</a></dt>
+<dd><p>Replaces annotation names in a numpy array or list</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.features.utils.zscore">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.features.utils.</span></span><span class="sig-name descname"><span class="pre">zscore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.features.utils.zscore" title="Link to this definition">#</a></dt>
+<dd><p>Calculates Z-score
+:param x: shape[n_samples, n_features]
+:type x: numpy ndarray</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>normalized_features</strong></p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>numpy ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -385,6 +543,30 @@ document.write(`
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.features.utils.augment_features"><code class="docutils literal notranslate"><span class="pre">augment_features()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.features.utils.balance_classes"><code class="docutils literal notranslate"><span class="pre">balance_classes()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.features.utils.find_category_outliers"><code class="docutils literal notranslate"><span class="pre">find_category_outliers()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.features.utils.get_class_count"><code class="docutils literal notranslate"><span class="pre">get_class_count()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.features.utils.get_classification_scores"><code class="docutils literal notranslate"><span class="pre">get_classification_scores()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.features.utils.print_classification_scores"><code class="docutils literal notranslate"><span class="pre">print_classification_scores()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.features.utils.remove_features"><code class="docutils literal notranslate"><span class="pre">remove_features()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.features.utils.remove_samples"><code class="docutils literal notranslate"><span class="pre">remove_samples()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.features.utils.replace_annotations"><code class="docutils literal notranslate"><span class="pre">replace_annotations()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.features.utils.zscore"><code class="docutils literal notranslate"><span class="pre">zscore()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

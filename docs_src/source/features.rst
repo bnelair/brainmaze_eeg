@@ -9,7 +9,8 @@ Annotations
 .. toctree::
    :caption: Data handling and analysis
 
-   features.feature_extractor
+   features.dataset
+   features.feature_extraction
    features.spectral_features
    features.time_domain_features
    features.utils

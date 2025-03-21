@@ -10,14 +10,11 @@ This project was published in the following paper:
  | Carvalho DZ, Kremen V, Mivalt F, St Louis EK, McCarter SJ, Bukartyk J, Przybelski SA, Kamykowski MG, Spychalla AJ, Machulda MM, Boeve BF, Petersen RC, Jack CR Jr, Lowe VJ, Graff-Radford J, Worrell GA, Somers VK, Varga AW, Vemuri P. Non-rapid eye movement sleep slow-wave activity features are associated with amyloid accumulation in older adults with obstructive sleep apnoea. Brain Commun. 2024 Oct 7;6(5):fcae354. doi: 10.1093/braincomms/fcae354. PMID: 39429245; PMCID: PMC11487750.
  |
 
-Here we conveniently provide a standalone fully functional code example for analysis related to this project - `One file example <./example_one_file.py>`_.
-
+Here we conveniently provide a standalone fully functional code example for analysis related to this project - `One file example <https://github.com/bnelair/brainmaze_eeg/tree/fmivalt/main/demo/eeg_wave_detection>`_.
 This enables trialing this code without installing the whole Best Toolbox library.
-The codes were also embedded in the BEST Toolbox so they can be freely available upon installing the whole `BEST Toolbox <https://best-toolbox.readthedocs.io/en/latest/>`_ library.
+The codes were also embedded into the brainmaze_eeg Toolbox so they can be freely available upon installing the whole `Brainmaze EEG <https://github.com/bnelair/brainmaze_eeg/>`_ library. The documentation to the toolbox is available at `Brainmaze EEG <https://bnelair.github.io/brainmaze_eeg>`_.
 
-The documentation to the toolbox is available at
-
-For more information on this specific project, see the page describing `Wave Detection <https://best-toolbox.readthedocs.io/en/latest/feature_extraction.WaveDetector.html>`_.
+TBD TBD !!!! For more information on this specific project, see the page describing `Wave Detection <https://best-toolbox.readthedocs.io/en/latest/feature_extraction.WaveDetector.html>`_.
 
 
 Acknowledgement
@@ -43,12 +40,12 @@ Examples
 Example of individual slow wave detections.
 
 
-.. image:: ../../_images/slow_waves_example.png
+.. image:: ../../img/wave_detection/slow_waves_example.png
    :width: 900
 
 Extracted features for the whole night.
 
-.. image:: ../../_images/slope_vaclav.png
+.. image:: ../../img/wave_detection/slope_vaclav.png
    :width: 900
 
 

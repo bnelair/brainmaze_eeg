@@ -9,11 +9,13 @@ import numpy as np
 import pandas as pd
 import datetime
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 from copy import deepcopy
 from tqdm import tqdm
 
-from brainmaze_eeg.hypnogram.visualisation import plot_hypnogram
-from brainmaze_annotations.utils import merge_annotations, filter_by_key
+from brainmaze_utils.annotations.utils import merge_annotations, filter_by_key
+
+
 
 
 """
@@ -569,7 +571,7 @@ def plot_hypnogram(orig_df, hypnogram_values=None, hypnogram_colors=None, fontsi
             hour=night_start,
             tzinfo=day_start.tzinfo
         )
-        night_end_ = night_start_ + timedelta(hours=12)
+        night_end_ = night_start_ + datetime.timedelta(hours=12)
         plt.axvspan(night_start_, night_end_, facecolor=background_color, alpha=background_alpha)
 
     # plot columns

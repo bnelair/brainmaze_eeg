@@ -94,7 +94,7 @@ from functools import partial
 
 from brainmaze_utils.types import ObjDict
 from brainmaze_utils.signal import buffer, PSD
-from brainmaze_features.feature_extraction.SpectralFeatures import *
+from brainmaze_eeg.features.spectral_features import *
 
 
 class SleepSpectralFeatureExtractor:
