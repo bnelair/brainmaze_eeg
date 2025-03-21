@@ -1,4 +1,4 @@
-name: Test brainmaze-utils
+name: Test brainmaze-eeg
 
 on: [push, pull_request]
 
