@@ -1,4 +1,4 @@
-BrainMaze - Utils
+BrainMaze - EEG
 ===================
 
 .. include:: rdm.rst
