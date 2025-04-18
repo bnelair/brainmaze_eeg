@@ -12,8 +12,6 @@ from brainmaze_eeg.preprocessing import (
     detect_flat_line,
 )
 
-import matplotlib.pyplot as plt
-
 def test_mask_signal_with_nans():
     # Test 1D input with drop rate below threshold
     x_1d = np.array([1.0, 2.0, np.nan, 4.0, 5.0])
