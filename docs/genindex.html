@@ -35,7 +35,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=5f8c8a40"></script>
+    <script src="_static/documentation_options.js?v=af9e50aa"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
@@ -171,7 +171,6 @@
 <li class="toctree-l1"><a class="reference internal" href="classifiers.html">Classifiers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="crp.html">CRP</a></li>
 <li class="toctree-l1"><a class="reference internal" href="hypnogram.html">Hypnogram</a></li>
-<li class="toctree-l1"><a class="reference internal" href="scikit_modules.html">Scikit Modules</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="features.html">Annotations</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="features.dataset.html">Dataset</a></li>
 <li class="toctree-l2"><a class="reference internal" href="features.feature_extraction.html">Feature Extraction</a></li>
@@ -181,6 +180,8 @@
 <li class="toctree-l2"><a class="reference internal" href="features.wave_detector.html">Wave Detector</a></li>
 </ul>
 </details></li>
+<li class="toctree-l1"><a class="reference internal" href="preprocessing.html">Preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scikit_modules.html">Scikit Modules</a></li>
 </ul>
 
     </div>
@@ -375,8 +376,6 @@ document.write(`
         <li><a href="features.feature_extraction.html#module-brainmaze_eeg.features.feature_extraction">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     brainmaze_eeg.features.spectral_features
 
@@ -384,6 +383,8 @@ document.write(`
         <li><a href="features.spectral_features.html#module-brainmaze_eeg.features.spectral_features">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     brainmaze_eeg.features.time_domain_features
 
@@ -410,6 +411,13 @@ document.write(`
 
       <ul>
         <li><a href="hypnogram.html#module-brainmaze_eeg.hypnogram">module</a>
+</li>
+      </ul></li>
+      <li>
+    brainmaze_eeg.preprocessing
+
+      <ul>
+        <li><a href="preprocessing.html#module-brainmaze_eeg.preprocessing">module</a>
 </li>
       </ul></li>
       <li>
@@ -453,8 +461,14 @@ document.write(`
 </li>
       <li><a href="features.feature_extraction.html#brainmaze_eeg.features.feature_extraction.SleepSpectralFeatureExtractor.design_filters">design_filters() (brainmaze_eeg.features.feature_extraction.SleepSpectralFeatureExtractor method)</a>
 </li>
+      <li><a href="preprocessing.html#brainmaze_eeg.preprocessing.detect_flat_line">detect_flat_line() (in module brainmaze_eeg.preprocessing)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="preprocessing.html#brainmaze_eeg.preprocessing.detect_outlier_noise">detect_outlier_noise() (in module brainmaze_eeg.preprocessing)</a>
+</li>
+      <li><a href="preprocessing.html#brainmaze_eeg.preprocessing.detect_powerline">detect_powerline() (in module brainmaze_eeg.preprocessing)</a>
+</li>
       <li><a href="features.wave_detector.html#brainmaze_eeg.features.wave_detector.WaveDetector.detect_waves">detect_waves() (brainmaze_eeg.features.wave_detector.WaveDetector method)</a>
 </li>
       <li><a href="hypnogram.html#brainmaze_eeg.hypnogram.do_median_filtration">do_median_filtration() (in module brainmaze_eeg.hypnogram)</a>
@@ -500,6 +514,8 @@ document.write(`
       <li><a href="hypnogram.html#brainmaze_eeg.hypnogram.fill_sleep_voids">fill_sleep_voids() (in module brainmaze_eeg.hypnogram)</a>
 </li>
       <li><a href="hypnogram.html#brainmaze_eeg.hypnogram.fill_wakerem_voids">fill_wakerem_voids() (in module brainmaze_eeg.hypnogram)</a>
+</li>
+      <li><a href="preprocessing.html#brainmaze_eeg.preprocessing.filter_powerline_notch">filter_powerline_notch() (in module brainmaze_eeg.preprocessing)</a>
 </li>
       <li><a href="features.utils.html#brainmaze_eeg.features.utils.find_category_outliers">find_category_outliers() (in module brainmaze_eeg.features.utils)</a>
 </li>
@@ -661,6 +677,8 @@ document.write(`
 </li>
       <li><a href="classifiers.html#brainmaze_eeg.classifiers.Mapper">Mapper (class in brainmaze_eeg.classifiers)</a>
 </li>
+      <li><a href="preprocessing.html#brainmaze_eeg.preprocessing.mask_signal_with_nans">mask_signal_with_nans() (in module brainmaze_eeg.preprocessing)</a>
+</li>
       <li><a href="features.wave_detector.html#brainmaze_eeg.features.wave_detector.WaveDetector.max_stats">max_stats() (brainmaze_eeg.features.wave_detector.WaveDetector class method)</a>
 </li>
       <li><a href="scikit_modules.html#brainmaze_eeg.scikit_modules.ZScoreModule.mean">mean (brainmaze_eeg.scikit_modules.ZScoreModule attribute)</a>
@@ -696,6 +714,8 @@ document.write(`
         <li><a href="features.wave_detector.html#module-brainmaze_eeg.features.wave_detector">brainmaze_eeg.features.wave_detector</a>
 </li>
         <li><a href="hypnogram.html#module-brainmaze_eeg.hypnogram">brainmaze_eeg.hypnogram</a>
+</li>
+        <li><a href="preprocessing.html#module-brainmaze_eeg.preprocessing">brainmaze_eeg.preprocessing</a>
 </li>
         <li><a href="scikit_modules.html#module-brainmaze_eeg.scikit_modules">brainmaze_eeg.scikit_modules</a>
 </li>
