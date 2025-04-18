@@ -15,39 +15,36 @@ def crp_method(v, t_win, prune_the_data):
     :return: tuple
         Tuple containing the output parameters and projections.
 
-    The function `crp_method` implements the Canonical Response Parametrization (CRP) method for ERP analysis of brain electrophysiology data. It takes in a voltage matrix `v`, a time array `t_win`, and a flag `prune_the_data
-    *`. It returns a tuple containing the output parameters and projections. Note that the methodology behind this is described in the manuscript:
-    "Canonical Response Parametrization: Quantifying the structure of responses to single-pulse intracranial electrical brain stimulation"
+    The function ``crp_method`` implements the Canonical Response Parametrization (CRP) method for ERP analysis of brain electrophysiology data. It takes in a voltage matrix ``v``, a time array ``t_win``, and a flag ``prune_the_data``. It returns a tuple containing the output parameters and projections. Note that the methodology behind this is described in the manuscript:
+
+    ``Canonical Response Parametrization: Quantifying the structure of responses to single-pulse intracranial electrical brain stimulation``
     by Kai J. Miller, et al., 2022. Python implementation by Vaclav Kremen, 1/2024 version 1.0.
 
-    The voltage matrix `v` is a 2D ndarray of shape `(n_samples, n_channels)`, where `n_samples` is the number of samples and `n_channels` is the number of channels.
+    The voltage matrix ``v`` is a 2D ndarray of shape ``(n_samples, n_channels)``, where ``n_samples`` is the number of samples and ``n_channels`` is the number of channels.
 
-    The time array `t_win` is a 1D ndarray of shape `(n_samples,)` representing the time window.
+    The time array ``t_win`` is a 1D ndarray of shape ``(n_samples,)`` representing the time window.
 
-    The flag `prune_the_data` is a boolean indicating whether to prune the data or not.
+    The flag ``prune_the_data`` is a boolean indicating whether to prune the data or not.
 
     The function performs the following steps:
 
     1. Calculates the sampling rate based on the time window.
     2. Calculates sets of normalized single stimulation cross-projection magnitudes using a specified time step.
-    3. Parameterizes the trials by reducing the voltage matrix to the response duration, performing kernel trick PCA to capture structure, and calculating the first principal component and
-    * residual epsilon.
+    3. Parameterizes the trials by reducing the voltage matrix to the response duration, performing kernel trick PCA to capture structure, and calculating the first principal component and residual epsilon.
     4. Returns the projections data, including projection timepoints, mean and variance of projection profiles, response duration index, average and standard deviation of input traces.
     5. Calculates significance statistics, such as the t-value and p-value at the response duration and full time sent in.
-    6. Returns the parameterization data, including the reduced voltage matrix, alpha coefficient weights, canonical shape, residual epsilon, response time, parameter timepoints, average
-    * and standard deviation of response traces, alpha coefficient weights normalized by the square root of the length of C, and the square root of the diagonal elements of ep.T @ ep.
-    7. Calculates extracted single-trial quantities, such as signal-to-noise ratio (Vsnr) and explained variance (expl_var) for each trial.
+    6. Returns the parameterization data, including the reduced voltage matrix, alpha coefficient weights, canonical shape, residual epsilon, response time, parameter timepoints, average and standard deviation of response traces, alpha coefficient weights normalized by the square root of the length of ``C``, and the square root of the diagonal elements of ``ep.T @ ep``.
+    7. Calculates extracted single-trial quantities, such as signal-to-noise ratio (``Vsnr``) and explained variance (``expl_var``) for each trial.
     8. Optionally prunes the data if requested, by removing trials that are too far from the given template and outliers.
     9. Returns the final output parameters and projections.
 
-    Example usage:
-    ```python
-    v = np.zeros((10, 1000))
-    t_win = np.arange(0, 1000/fs, 1/fs)
-    prune_the_data = True
+    Example usage::
 
-    crp_parameters, crp_projections = crp_method(v, t_win, prune_the_data)
-    ```
+        v = np.zeros((10, 1000))
+        t_win = np.arange(0, 1000/fs, 1/fs)
+        prune_the_data = True
+
+        crp_parameters, crp_projections = crp_method(v, t_win, prune_the_data)
     """
 
     # region For testing purposes

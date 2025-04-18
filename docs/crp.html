@@ -36,7 +36,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=5f8c8a40"></script>
+    <script src="_static/documentation_options.js?v=af9e50aa"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
@@ -172,7 +172,6 @@
 <li class="toctree-l1"><a class="reference internal" href="classifiers.html">Classifiers</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">CRP</a></li>
 <li class="toctree-l1"><a class="reference internal" href="hypnogram.html">Hypnogram</a></li>
-<li class="toctree-l1"><a class="reference internal" href="scikit_modules.html">Scikit Modules</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="features.html">Annotations</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="features.dataset.html">Dataset</a></li>
 <li class="toctree-l2"><a class="reference internal" href="features.feature_extraction.html">Feature Extraction</a></li>
@@ -182,6 +181,8 @@
 <li class="toctree-l2"><a class="reference internal" href="features.wave_detector.html">Wave Detector</a></li>
 </ul>
 </details></li>
+<li class="toctree-l1"><a class="reference internal" href="preprocessing.html">Preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scikit_modules.html">Scikit Modules</a></li>
 </ul>
 
     </div>
@@ -398,34 +399,32 @@ Flag indicating whether to prune the data or not.</p></li>
 Tuple containing the output parameters and projections.</p>
 </dd>
 </dl>
-<p>The function <cite>crp_method</cite> implements the Canonical Response Parametrization (CRP) method for ERP analysis of brain electrophysiology data. It takes in a voltage matrix <cite>v</cite>, a time array <cite>t_win</cite>, and a flag <cite>prune_the_data
-*</cite>. It returns a tuple containing the output parameters and projections. Note that the methodology behind this is described in the manuscript:
-“Canonical Response Parametrization: Quantifying the structure of responses to single-pulse intracranial electrical brain stimulation”
+<p>The function <code class="docutils literal notranslate"><span class="pre">crp_method</span></code> implements the Canonical Response Parametrization (CRP) method for ERP analysis of brain electrophysiology data. It takes in a voltage matrix <code class="docutils literal notranslate"><span class="pre">v</span></code>, a time array <code class="docutils literal notranslate"><span class="pre">t_win</span></code>, and a flag <code class="docutils literal notranslate"><span class="pre">prune_the_data</span></code>. It returns a tuple containing the output parameters and projections. Note that the methodology behind this is described in the manuscript:</p>
+<p><code class="docutils literal notranslate"><span class="pre">Canonical</span> <span class="pre">Response</span> <span class="pre">Parametrization:</span> <span class="pre">Quantifying</span> <span class="pre">the</span> <span class="pre">structure</span> <span class="pre">of</span> <span class="pre">responses</span> <span class="pre">to</span> <span class="pre">single-pulse</span> <span class="pre">intracranial</span> <span class="pre">electrical</span> <span class="pre">brain</span> <span class="pre">stimulation</span></code>
 by Kai J. Miller, et al., 2022. Python implementation by Vaclav Kremen, 1/2024 version 1.0.</p>
-<p>The voltage matrix <cite>v</cite> is a 2D ndarray of shape <cite>(n_samples, n_channels)</cite>, where <cite>n_samples</cite> is the number of samples and <cite>n_channels</cite> is the number of channels.</p>
-<p>The time array <cite>t_win</cite> is a 1D ndarray of shape <cite>(n_samples,)</cite> representing the time window.</p>
-<p>The flag <cite>prune_the_data</cite> is a boolean indicating whether to prune the data or not.</p>
+<p>The voltage matrix <code class="docutils literal notranslate"><span class="pre">v</span></code> is a 2D ndarray of shape <code class="docutils literal notranslate"><span class="pre">(n_samples,</span> <span class="pre">n_channels)</span></code>, where <code class="docutils literal notranslate"><span class="pre">n_samples</span></code> is the number of samples and <code class="docutils literal notranslate"><span class="pre">n_channels</span></code> is the number of channels.</p>
+<p>The time array <code class="docutils literal notranslate"><span class="pre">t_win</span></code> is a 1D ndarray of shape <code class="docutils literal notranslate"><span class="pre">(n_samples,)</span></code> representing the time window.</p>
+<p>The flag <code class="docutils literal notranslate"><span class="pre">prune_the_data</span></code> is a boolean indicating whether to prune the data or not.</p>
 <p>The function performs the following steps:</p>
 <ol class="arabic simple">
 <li><p>Calculates the sampling rate based on the time window.</p></li>
 <li><p>Calculates sets of normalized single stimulation cross-projection magnitudes using a specified time step.</p></li>
+<li><p>Parameterizes the trials by reducing the voltage matrix to the response duration, performing kernel trick PCA to capture structure, and calculating the first principal component and residual epsilon.</p></li>
+<li><p>Returns the projections data, including projection timepoints, mean and variance of projection profiles, response duration index, average and standard deviation of input traces.</p></li>
+<li><p>Calculates significance statistics, such as the t-value and p-value at the response duration and full time sent in.</p></li>
+<li><p>Returns the parameterization data, including the reduced voltage matrix, alpha coefficient weights, canonical shape, residual epsilon, response time, parameter timepoints, average and standard deviation of response traces, alpha coefficient weights normalized by the square root of the length of <code class="docutils literal notranslate"><span class="pre">C</span></code>, and the square root of the diagonal elements of <code class="docutils literal notranslate"><span class="pre">ep.T</span> <span class="pre">&#64;</span> <span class="pre">ep</span></code>.</p></li>
+<li><p>Calculates extracted single-trial quantities, such as signal-to-noise ratio (<code class="docutils literal notranslate"><span class="pre">Vsnr</span></code>) and explained variance (<code class="docutils literal notranslate"><span class="pre">expl_var</span></code>) for each trial.</p></li>
+<li><p>Optionally prunes the data if requested, by removing trials that are too far from the given template and outliers.</p></li>
+<li><p>Returns the final output parameters and projections.</p></li>
 </ol>
-<p>3. Parameterizes the trials by reducing the voltage matrix to the response duration, performing kernel trick PCA to capture structure, and calculating the first principal component and
-* residual epsilon.
-4. Returns the projections data, including projection timepoints, mean and variance of projection profiles, response duration index, average and standard deviation of input traces.
-5. Calculates significance statistics, such as the t-value and p-value at the response duration and full time sent in.
-6. Returns the parameterization data, including the reduced voltage matrix, alpha coefficient weights, canonical shape, residual epsilon, response time, parameter timepoints, average
-* and standard deviation of response traces, alpha coefficient weights normalized by the square root of the length of C, and the square root of the diagonal elements of ep.T &#64; ep.
-7. Calculates extracted single-trial quantities, such as signal-to-noise ratio (Vsnr) and explained variance (expl_var) for each trial.
-8. Optionally prunes the data if requested, by removing trials that are too far from the given template and outliers.
-9. Returns the final output parameters and projections.</p>
-<p>Example usage:
-<a href="#id1"><span class="problematic" id="id2">``</span></a><a href="#id3"><span class="problematic" id="id4">`</span></a>python
-v = np.zeros((10, 1000))
-t_win = np.arange(0, 1000/fs, 1/fs)
-prune_the_data = True</p>
-<p>crp_parameters, crp_projections = crp_method(v, t_win, prune_the_data)
-<a href="#id5"><span class="problematic" id="id6">``</span></a><a href="#id7"><span class="problematic" id="id8">`</span></a></p>
+<p>Example usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1000</span><span class="p">))</span>
+<span class="n">t_win</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="o">/</span><span class="n">fs</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="n">fs</span><span class="p">)</span>
+<span class="n">prune_the_data</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="n">crp_parameters</span><span class="p">,</span> <span class="n">crp_projections</span> <span class="o">=</span> <span class="n">crp_method</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">t_win</span><span class="p">,</span> <span class="n">prune_the_data</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
