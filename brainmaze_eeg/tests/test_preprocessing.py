@@ -171,7 +171,7 @@ def test_detect_stim():
 
     y, psd_sum = detect_stim(x, fs, detection_window=detection_window)
 
-    assert y.shape[0] == x.shape[0]/fs/detection_window - 1, ""
+    assert y.shape[0] == x.shape[0]/fs/detection_window, ""
     assert np.all(y[int(stim_start_sec/detection_window):int(stim_end_sec/detection_window)] == 1)
 
     x2d = np.stack([x, x[::-1]], 0)

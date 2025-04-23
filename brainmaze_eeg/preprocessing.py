@@ -248,9 +248,14 @@ def detect_stim(x: np.typing.NDArray[np.float64], fs: float, detection_window:fl
         x = x[np.newaxis, :]
 
     x_diff = np.diff(x, axis=-1)     # difference signal highlights artificial pulses
+    x_diff = np.concat(
+        (x_diff, x_diff[:, -1].reshape(-1, 1)), axis=1,
+    )
+
     xb =  np.array([
         buffer(x_, fs, segm_size=detection_window, drop=True) for x_ in x_diff
     ])
+
 
     freq, psd = PSD(xb, fs=fs)
     psd_hf = psd[:, :, (freq > freq_band[0]) & (freq < freq_band[1])]
