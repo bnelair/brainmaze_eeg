@@ -1,6 +1,7 @@
 
 import numpy as np
 import scipy.signal as signal
+from typing import Tuple
 
 from brainmaze_utils.signal import PSD, buffer
 
@@ -215,5 +216,53 @@ def detect_flat_line(
         detected_flat_line = detected_flat_line[0]
 
     return detected_flat_line
+
+
+def detect_stim(x: np.typing.NDArray[np.float64], fs: float, detection_window:float = 1,
+                detection_threshold:float = 2000, freq_band: Tuple[float, float] = (80, 110,)):
+    """
+    Detects stimulation artifacts in the input signal. Calculates differential signal of the input signal.
+    Spectral power of the differential signal between the bands provided in frequency band is
+    thresholded  for each detection window.
+
+    Parameters:
+        x (np.ndarray): Input signal, either 1D or 2D array.
+        fs (float): Sampling frequency.
+        detection_window (float): Length of the segment in seconds. Default is 1 second.
+        detection_threshold (float): Threshold for detecting stimulation artifacts. Default is 2000.
+        freq_band (tuple): Frequency band to consider for artifact detection (low, high). Default is (80, 110).
+
+    Returns:
+        tuple:
+            - np.ndarray: Boolean array indicating the presence of stimulation artifacts for each detection window.
+            - np.ndarray: Spectral power within the specified frequency band for each detection window.
+
+    Raises:
+        ValueError: If the input signal is not 1D or 2D.
+    """
+    ndim = x.ndim
+    if ndim == 0 or ndim > 2:
+        raise ValueError("Input 'x' must be a 1D or nD numpy array.")
+
+    if x.ndim == 1:
+        x = x[np.newaxis, :]
+
+    x_diff = np.diff(x, axis=-1)     # difference signal highlights artificial pulses
+    xb =  np.array([
+        buffer(x_, fs, segm_size=detection_window, drop=True) for x_ in x_diff
+    ])
+
+    freq, psd = PSD(xb, fs=fs)
+    psd_hf = psd[:, :, (freq > freq_band[0]) & (freq < freq_band[1])]
+    psd_sum = np.sum(psd_hf, axis=-1)
+    detected_stim = (psd_sum >= detection_threshold).astype(int)
+
+    if ndim == 1:
+        detected_stim = detected_stim[0]
+        psd_sum = psd_sum[0]
+
+    return detected_stim, psd_sum
+
+
 
 
