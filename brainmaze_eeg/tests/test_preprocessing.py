@@ -4,12 +4,14 @@ import pytest
 import numpy as np
 import scipy.signal as signal
 
+
 from brainmaze_eeg.preprocessing import (
     mask_segment_with_nans,
     filter_powerline_notch,
     detect_outlier_noise,
     detect_powerline,
     detect_flat_line,
+    detect_stim
 )
 
 def test_mask_signal_with_nans():
@@ -151,6 +153,39 @@ def test_detect_flat_line():
     assert y[0, 1] == True, "2nd second segment should be detected as flat line"
     assert y[0, 2] == False, "3rd second segment should not be detected as flat line"
     assert np.all(y[0] == y[1][::-1]), "Output should be the same for both channels"
+
+def test_detect_stim():
+    # Parameters
+    fs = 250  # Hz
+    duration = 60  # seconds
+    stim_freq = 145 # Hz
+    detection_window = 1
+    stim_start_sec, stim_end_sec = 5, 15
+
+    # Generate EEG + add stim artifact
+    t = np.linspace(0, duration, int(fs * duration), endpoint=False)
+    signal_145hz = 100 * np.sin(2 * np.pi * stim_freq * t)
+
+    x = 0.1*np.random.randn(signal_145hz.shape[0])
+    x[int(stim_start_sec*fs):int(stim_end_sec*fs)] += signal_145hz[int(stim_start_sec*fs):int(stim_end_sec*fs)]
+
+    y, psd_sum = detect_stim(x, fs, detection_window=detection_window)
+
+    assert y.shape[0] == x.shape[0]/fs/detection_window, ""
+    assert np.all(y[int(stim_start_sec/detection_window):int(stim_end_sec/detection_window)] == 1)
+
+    x2d = np.stack([x, x[::-1]], 0)
+    y2, psd_sum2 = detect_stim(x2d, fs, detection_window=detection_window)
+
+    assert np.all(y2[0] == y)
+    assert np.all(y2[1, int((duration-stim_end_sec)/detection_window):int((duration-stim_start_sec)/detection_window)] == 1)
+
+
+
+
+
+
+
 
 
 
