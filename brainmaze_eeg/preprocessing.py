@@ -1,7 +1,6 @@
 
 import numpy as np
 import scipy.signal as signal
-from scipy.ndimage import binary_dilation
 from typing import Tuple
 
 from brainmaze_utils.signal import PSD, buffer
@@ -283,7 +282,7 @@ def substitute_noise_with_nan(x: np.typing.NDArray[np.float64], merged_noise: np
                                        the presence of a stimulation artifact in that second.
 
     Returns:
-        np.ndarray: A copy of the input EEG signal with artifact segments replaced by NaN.
+        np.ndarray: EEG signal with artifact segments replaced by NaN.
 
     Raises:
         ValueError: If the input signal is not 1D or 2D.
