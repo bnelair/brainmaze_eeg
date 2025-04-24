@@ -1,7 +1,6 @@
 
 import numpy as np
 import scipy.signal as signal
-from scipy.ndimage import binary_dilation
 from typing import Tuple
 
 from brainmaze_utils.signal import PSD, buffer
