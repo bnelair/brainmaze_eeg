@@ -1,4 +1,3 @@
-
 import pytest
 
 import numpy as np
@@ -11,7 +10,8 @@ from brainmaze_eeg.preprocessing import (
     detect_outlier_noise,
     detect_powerline,
     detect_flat_line,
-    detect_stim
+    detect_stim,
+    substitute_noise_with_nan
 )
 
 def test_mask_signal_with_nans():
@@ -179,6 +179,35 @@ def test_detect_stim():
 
     assert np.all(y2[0] == y)
     assert np.all(y2[1, int((duration-stim_end_sec)/detection_window):int((duration-stim_start_sec)/detection_window)] == 1)
+
+def test_noise_substitution():
+    fs = 250
+    n_sec = 60
+    n_samples = fs * n_sec
+    n_channels = 2
+
+    x2d = np.random.randn(n_channels, n_samples)
+
+    merged_noise = np.zeros((n_channels, n_sec))
+    merged_noise[0, [1, 3]] = 1
+    merged_noise[1, [2]] = 1
+
+    x_clean2d = substitute_noise_with_nan(x2d, merged_noise, fs, n_sec)
+
+    assert np.isnan(x_clean2d[0, 1 * fs:2 * fs]).all()
+    assert np.isnan(x_clean2d[0, 3 * fs:4 * fs]).all()
+    assert np.isnan(x_clean2d[1, 2 * fs:3 * fs]).all()
+
+    assert ~(np.isnan(x_clean2d[0, 0:fs]).any())
+    assert ~(np.isnan(x_clean2d[1, 0:fs]).any())
+
+    x = np.random.randn(n_samples)
+    merged_noise = np.zeros(n_sec)
+    merged_noise[1] = 1  # noise in second 1
+    x_clean = substitute_noise_with_nan(x, merged_noise, fs, n_sec)
+
+    assert np.isnan(x_clean[fs:2 * fs]).all()
+    assert ~(np.isnan(x_clean[2 * fs:]).any())
 
 
 
