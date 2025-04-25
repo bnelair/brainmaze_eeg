@@ -30,7 +30,7 @@ def test_mask_nans_median():
     assert np.isnan(result_1d).sum() == 5, "1D input with all NaNs should be fully masked"
 
 
-def test_mask_nans_median():
+def test_channel_data_rate_thresholding():
     # Test 1D input with drop rate below threshold
     x_1d = np.array([1.0, 2.0, np.nan, 4.0, 5.0])
     dr_threshold = 0.5
