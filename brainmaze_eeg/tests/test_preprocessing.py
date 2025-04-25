@@ -16,17 +16,17 @@ from brainmaze_eeg.preprocessing import (
     mask_segments_with_nans
 )
 
-def test_mask_nans_median():
+def test_replace_nans_with_medians():
     # Test 2D input with drop rate below threshold
     x_2d = np.array([[np.nan, 2.0, 2.0, 2.0, np.nan], [4.0, 5.0, 6.0, np.nan, np.nan]])
 
-    x_2d = replace_nans_with_median(x_2d)
-    assert np.isnan(x_2d).sum(1) == [0, 0], "2D input below threshold should not be masked"
-    assert x_2d[0, 0] == x_2d[0, -1] == 2.0, "First element should be 2.0"
-    assert x_2d[1, -1] == x_2d[1, -2] == 5.0, "First element should be 4.0"
+    result_2d, dr, mask = replace_nans_with_median(x_2d)
+    assert (np.isnan(result_2d).sum(1) == [0, 0]).all(), "2D input below threshold should not be masked"
+    assert result_2d[0, 0] == result_2d[0, -1] == 2.0, "First element should be 2.0"
+    assert result_2d[1, -1] == result_2d[1, -2] == 5.0, "First element should be 4.0"
 
     x_1d_nans = np.array([np.nan, np.nan, np.nan, np.nan, np.nan])
-    result_1d = replace_nans_with_median(x_1d_nans)
+    result_1d, dr, mask = replace_nans_with_median(x_1d_nans)
     assert np.isnan(result_1d).sum() == 5, "1D input with all NaNs should be fully masked"
 
 
