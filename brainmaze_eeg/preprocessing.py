@@ -40,14 +40,16 @@ def channel_data_rate_thresholding(x: np.typing.NDArray[np.float64], data_rate_t
 
 def replace_nans_with_median(x: np.typing.NDArray[np.float64]):
     """
-
+    Replaces NaN values in the input signal with the median of the non-NaN values along each channel.
 
     Parameters:
         x (np.ndarray): Input signal, either 1D or 2D array.
-        dr_threshold (float, optional): Drop rate threshold for masking. Default is 0.1.
 
     Returns:
-        np.ndarray: Signal with masked values replaced by NaNs.
+        Tuple[np.ndarray, np.ndarray, np.ndarray]: A tuple containing:
+            - processed_signal (np.ndarray): Signal with NaN values replaced by the median.
+            - data_rate (np.ndarray): Data rate for each channel, calculated as the proportion of non-NaN values.
+            - mask (np.ndarray): Boolean mask indicating the positions of NaN values in the original signal.
 
     Raises:
         ValueError: If the input signal is not 1D or 2D.
