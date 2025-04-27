@@ -36,7 +36,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=faf57a2e"></script>
+    <script src="_static/documentation_options.js?v=33a6225d"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
@@ -537,18 +537,24 @@ the presence of a stimulation artifact in that second.</p></li>
 <dl class="py function">
 <dt class="sig sig-object py" id="brainmaze_eeg.preprocessing.replace_nans_with_median">
 <span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.preprocessing.</span></span><span class="sig-name descname"><span class="pre">replace_nans_with_median</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.preprocessing.replace_nans_with_median" title="Link to this definition">#</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Replaces NaN values in the input signal with the median of the non-NaN values along each channel.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<em>np.ndarray</em>) – Input signal, either 1D or 2D array.</p></li>
-<li><p><strong>dr_threshold</strong> (<em>float</em><em>, </em><em>optional</em>) – Drop rate threshold for masking. Default is 0.1.</p></li>
-</ul>
+<dd class="field-odd"><p><strong>x</strong> (<em>np.ndarray</em>) – Input signal, either 1D or 2D array.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Signal with masked values replaced by NaNs.</p>
+<dd class="field-even"><p><dl class="simple">
+<dt>A tuple containing:</dt><dd><ul class="simple">
+<li><p>processed_signal (np.ndarray): Signal with NaN values replaced by the median.</p></li>
+<li><p>data_rate (np.ndarray): Data rate for each channel, calculated as the proportion of non-NaN values.</p></li>
+<li><p>mask (np.ndarray): Boolean mask indicating the positions of NaN values in the original signal.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>np.ndarray</p>
+<dd class="field-odd"><p>Tuple[np.ndarray, np.ndarray, np.ndarray]</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>ValueError</strong> – If the input signal is not 1D or 2D.</p>

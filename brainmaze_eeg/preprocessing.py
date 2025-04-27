@@ -64,15 +64,13 @@ def replace_nans_with_median(x: np.typing.NDArray[np.float64]):
         x = x[np.newaxis, :]  # Add a new axis to make it 2D
 
     mask = np.isnan(x)
-    datarate = 1 - (mask.sum(axis=1) / x.shape[1])
 
     if not mask.any(): # if no nans, just return
         if ndim == 1:
             x = x[0]
             mask = mask[0]
-            datarate = datarate[0]
 
-        return x, datarate, mask
+        return x, mask
 
     med_vals = np.nanmedian(x, axis=1, keepdims=True)
     x = np.where(mask, med_vals, x)
@@ -80,7 +78,7 @@ def replace_nans_with_median(x: np.typing.NDArray[np.float64]):
     if ndim == 1:
         x = x[0]
 
-    return x, datarate, mask
+    return x, mask
 
 
 def filter_powerline(x: np.typing.NDArray[np.float64], fs: float, frequency_powerline: float=60):
@@ -309,69 +307,6 @@ def detect_stim_segments(x: np.typing.NDArray[np.float64], fs: float, detection_
         psd_sum = psd_sum[0]
 
     return detected_stim, psd_sum
-
-
-def substitute_noise_with_nan(x: np.typing.NDArray[np.float64], merged_noise: np.typing.NDArray[np.float64],
-                              fs: float, n_sec: float):
-    """
-    Masks EEG signal segments with noise and stimulation artifacts by setting them to NaN.
-
-    Parameters:
-        x (np.ndarray): 1D or 2D array of EEG data with shape (n_channels, n_samples).
-        fs (int): Sampling rate of the EEG signal in Hz.
-        n_sec (int): Number of seconds in the EEG signal.
-        merged_noise (np.ndarray): Binary matrix of shape (n_channels, n_sec) where 1 indicates
-                                       the presence of a stimulation artifact in that second.
-
-    Returns:
-        np.ndarray: EEG signal with artifact segments replaced by NaN.
-
-    Raises:
-        ValueError: If the input signal is not 1D or 2D.
-    """
-    ndim = x.ndim
-    if ndim == 0 or ndim > 2:
-        raise ValueError("Input 'x' must be a 1D or nD numpy array.")
-
-    if merged_noise.ndim != ndim:
-        raise ValueError("Input 'merged_noise' must have same dimension as input signal 'x'.")
-
-    if x.ndim == 1:
-        x = x[np.newaxis, :]
-        merged_noise = merged_noise[np.newaxis, :]
-
-
-    n_channels, n_samples = x.shape
-    samples_per_segment = (fs * n_sec) // merged_noise.shape[1]
-
-    #  # Create index offsets for each segment
-    window_len = merged_noise.shape[1]
-    segment_indices = np.arange(window_len) * samples_per_segment
-    segment_range = np.arange(samples_per_segment)
-
-    # Find all artifact locations
-    segment_offsets = segment_range[None, :] + segment_indices[:, None]     #shape: (n_seconds, samples_per_segment)
-    channel_idx, second_idx = np.where(merged_noise == 1)
-    sample_indices = segment_offsets[second_idx]  # shape: (num_artifacts, samples_per_segment)
-
-    # Filter out segments that would exceed signal bounds
-    valid_mask = sample_indices[:, -1] < n_samples
-    channel_idx = channel_idx[valid_mask]
-    sample_indices = sample_indices[valid_mask]
-
-    # Apply NaNs to the artifact regions
-    x_sub = x.copy()
-    x_sub[channel_idx[:, None], sample_indices] = np.nan
-
-    if ndim == 1:
-        x_sub = x_sub[0]
-    return x_sub
-
-
-
-
-
-
 
 
 def mask_segments_with_nans(x: np.typing.NDArray[np.float64], merged_noise: np.typing.NDArray[np.float64],
