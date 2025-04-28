@@ -31,7 +31,7 @@ os.chdir(curwd)
 # -- Project information -----------------------------------------------------
 
 # General information about the project.
-project = 'BrainMaze: A Toolbox to Analyze Brain Electrophysiology, Behavior and Dynamics - Utils'
+project = 'BrainMaze: A Toolbox to Analyze Brain Electrophysiology, Behavior and Dynamics - EEG'
 author = 'Filip Mivalt M.Sc., Ph.D.'
 copyright = '2020-present, Mayo Clinic Department of Neurology - Laboratory of Bioelectronics Neurophysiology and Engineering. All rights reserved'
 
@@ -147,7 +147,7 @@ html_theme_options = {
     # Toc options
     'collapse_navigation': False,
     'navigation_depth': 5,
-    "repository_url": "https://github.com/bnelair/brainmaze_utils",
+    "repository_url": "https://github.com/bnelair/brainmaze_eeg",
     "use_repository_button": True,
     "home_page_in_toc": True
 }
@@ -158,10 +158,10 @@ html_theme_options = {
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-html_title = 'BrainMaze: A Toolbox to Analyze Brain Electrophysiology, Behavior and Dynamics - Utils'
+html_title = 'BrainMaze: A Toolbox to Analyze Brain Electrophysiology, Behavior and Dynamics - EEG'
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
-html_short_title = 'BrainMaze: Utils'
+html_short_title = 'BrainMaze: EEG'
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
@@ -224,7 +224,7 @@ html_show_copyright = True
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'brainmaze-utils'
+htmlhelp_basename = 'brainmaze-eeg'
 
 
 # -- Options for LaTeX output ---------------------------------------------
