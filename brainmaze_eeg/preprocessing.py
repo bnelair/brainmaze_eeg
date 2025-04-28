@@ -310,16 +310,16 @@ def detect_stim_segments(x: np.typing.NDArray[np.float64], fs: float, detection_
     return detected_stim, psd_sum
 
 
-def mask_segments_with_nans(x: np.typing.NDArray[np.float64], merged_noise: np.typing.NDArray[np.float64],
-                            fs: float, n_sec: float):
+def mask_segments_with_nans(x: np.typing.NDArray[np.float64], segment_mask: np.typing.NDArray[np.float64],
+                            fs: float, segment_len_s: float):
     """
-    Masks EEG signal segments with noise and stimulation artifacts by setting them to NaN.
+    Masks EEG signal segments based on provided mask setting them to NaN.
 
     Parameters:
         x (np.ndarray): 1D or 2D array of EEG data with shape (n_channels, n_samples).
         fs (int): Sampling rate of the EEG signal in Hz.
-        n_sec (int): Number of seconds in the EEG signal.
-        merged_noise (np.ndarray): Binary matrix of shape (n_channels, n_sec) where 1 indicates
+        segment_len_s (int): Duration of each segment in seconds.
+        segment_mask (np.ndarray): Binary matrix of shape (n_channels, n_sec) where 1 indicates
                                        the presence of a stimulation artifact in that second.
 
     Returns:
@@ -332,25 +332,25 @@ def mask_segments_with_nans(x: np.typing.NDArray[np.float64], merged_noise: np.t
     if ndim == 0 or ndim > 2:
         raise ValueError("Input 'x' must be a 1D or nD numpy array.")
 
-    if merged_noise.ndim != ndim:
+    if segment_mask.ndim != ndim:
         raise ValueError("Input 'merged_noise' must have same dimension as input signal 'x'.")
 
     if x.ndim == 1:
         x = x[np.newaxis, :]
-        merged_noise = merged_noise[np.newaxis, :]
+        segment_mask = segment_mask[np.newaxis, :]
 
 
     n_channels, n_samples = x.shape
-    samples_per_segment = (fs * n_sec) // merged_noise.shape[1]
+    samples_per_segment = int(np.round(fs * segment_len_s))
 
     #  # Create index offsets for each segment
-    window_len = merged_noise.shape[1]
+    window_len = segment_mask.shape[1]
     segment_indices = np.arange(window_len) * samples_per_segment
     segment_range = np.arange(samples_per_segment)
 
     # Find all artifact locations
     segment_offsets = segment_range[None, :] + segment_indices[:, None]     #shape: (n_seconds, samples_per_segment)
-    channel_idx, second_idx = np.where(merged_noise == 1)
+    channel_idx, second_idx = np.where(segment_mask == 1)
     sample_indices = segment_offsets[second_idx]  # shape: (num_artifacts, samples_per_segment)
 
     # Filter out segments that would exceed signal bounds
