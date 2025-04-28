@@ -36,7 +36,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=669ea712"></script>
+    <script src="_static/documentation_options.js?v=01cc6a71"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
@@ -351,6 +351,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.preprocessing.detect_outlier_segments"><code class="docutils literal notranslate"><span class="pre">detect_outlier_segments()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.preprocessing.detect_powerline_segments"><code class="docutils literal notranslate"><span class="pre">detect_powerline_segments()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.preprocessing.detect_stim_segments"><code class="docutils literal notranslate"><span class="pre">detect_stim_segments()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.preprocessing.detection_dilatation"><code class="docutils literal notranslate"><span class="pre">detection_dilatation()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.preprocessing.filter_powerline"><code class="docutils literal notranslate"><span class="pre">filter_powerline()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.preprocessing.mask_segments_with_nans"><code class="docutils literal notranslate"><span class="pre">mask_segments_with_nans()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.preprocessing.replace_nans_with_median"><code class="docutils literal notranslate"><span class="pre">replace_nans_with_median()</span></code></a></li>
@@ -502,6 +503,30 @@ thresholded  for each detection window.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.preprocessing.detection_dilatation">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.preprocessing.</span></span><span class="sig-name descname"><span class="pre">detection_dilatation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extend_left</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extend_right</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.preprocessing.detection_dilatation" title="Link to this definition">#</a></dt>
+<dd><p>Extends True values in a boolean mask by a fixed number of positions to the left and right.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mask</strong> (<em>np.ndarray</em>) – 1D or 2D boolean array indicating detection.</p></li>
+<li><p><strong>extend_left</strong> (<em>int</em>) – Number of positions to extend left of each detection.</p></li>
+<li><p><strong>extend_right</strong> (<em>int</em>) – Number of positions to extend right of each detection.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Extended boolean mask with same shape.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the input signal is not 1D or 2D.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="brainmaze_eeg.preprocessing.filter_powerline">
 <span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.preprocessing.</span></span><span class="sig-name descname"><span class="pre">filter_powerline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frequency_powerline</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">60</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.preprocessing.filter_powerline" title="Link to this definition">#</a></dt>
 <dd><p>Filters powerline noise from the input signal using a notch filter. The function replaces NaN values with the
@@ -614,6 +639,7 @@ the presence of a stimulation artifact in that second.</p></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.preprocessing.detect_outlier_segments"><code class="docutils literal notranslate"><span class="pre">detect_outlier_segments()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.preprocessing.detect_powerline_segments"><code class="docutils literal notranslate"><span class="pre">detect_powerline_segments()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.preprocessing.detect_stim_segments"><code class="docutils literal notranslate"><span class="pre">detect_stim_segments()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.preprocessing.detection_dilatation"><code class="docutils literal notranslate"><span class="pre">detection_dilatation()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.preprocessing.filter_powerline"><code class="docutils literal notranslate"><span class="pre">filter_powerline()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.preprocessing.mask_segments_with_nans"><code class="docutils literal notranslate"><span class="pre">mask_segments_with_nans()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.preprocessing.replace_nans_with_median"><code class="docutils literal notranslate"><span class="pre">replace_nans_with_median()</span></code></a></li>
