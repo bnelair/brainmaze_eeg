@@ -11,10 +11,9 @@
 
    classifiers
    crp
-   hypnogram
    features
+   hypnogram
    preprocessing
    scikit_modules
-
 
 
