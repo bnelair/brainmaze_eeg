@@ -1,4 +1,4 @@
-Annotations
+Features
 ============
 
 .. automodule:: brainmaze_eeg.features

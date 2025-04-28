@@ -36,7 +36,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=8750d002"></script>
+    <script src="_static/documentation_options.js?v=669ea712"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
@@ -44,8 +44,8 @@
     <link rel="icon" href="_static/brainmaze_173x173.png"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Annotations" href="features.html" />
-    <link rel="prev" title="CRP" href="crp.html" />
+    <link rel="next" title="Preprocessing" href="preprocessing.html" />
+    <link rel="prev" title="Wave Detector" href="features.wave_detector.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -171,8 +171,7 @@
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="classifiers.html">Classifiers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="crp.html">CRP</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Hypnogram</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="features.html">Annotations</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="features.html">Features</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="features.dataset.html">Dataset</a></li>
 <li class="toctree-l2"><a class="reference internal" href="features.feature_extraction.html">Feature Extraction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="features.spectral_features.html">Spectral Features</a></li>
@@ -181,6 +180,7 @@
 <li class="toctree-l2"><a class="reference internal" href="features.wave_detector.html">Wave Detector</a></li>
 </ul>
 </details></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Hypnogram</a></li>
 <li class="toctree-l1"><a class="reference internal" href="preprocessing.html">Preprocessing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="scikit_modules.html">Scikit Modules</a></li>
 </ul>
@@ -323,7 +323,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -339,6 +341,38 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.correct_hypnogram"><code class="docutils literal notranslate"><span class="pre">correct_hypnogram()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.correct_rem"><code class="docutils literal notranslate"><span class="pre">correct_rem()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.do_median_filtration"><code class="docutils literal notranslate"><span class="pre">do_median_filtration()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.fill_nonrem_voids"><code class="docutils literal notranslate"><span class="pre">fill_nonrem_voids()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.fill_same_voids"><code class="docutils literal notranslate"><span class="pre">fill_same_voids()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.fill_sleep_voids"><code class="docutils literal notranslate"><span class="pre">fill_sleep_voids()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.fill_wakerem_voids"><code class="docutils literal notranslate"><span class="pre">fill_wakerem_voids()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.get_awakening_time"><code class="docutils literal notranslate"><span class="pre">get_awakening_time()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.get_fell_asleep_time"><code class="docutils literal notranslate"><span class="pre">get_fell_asleep_time()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.get_hypnogram_datarate"><code class="docutils literal notranslate"><span class="pre">get_hypnogram_datarate()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.get_number_of_awakenings"><code class="docutils literal notranslate"><span class="pre">get_number_of_awakenings()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.get_number_of_sleep_stages"><code class="docutils literal notranslate"><span class="pre">get_number_of_sleep_stages()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.get_rem_latency"><code class="docutils literal notranslate"><span class="pre">get_rem_latency()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.get_stage_times"><code class="docutils literal notranslate"><span class="pre">get_stage_times()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.get_stage_times_dataset"><code class="docutils literal notranslate"><span class="pre">get_stage_times_dataset()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.get_time_by_key"><code class="docutils literal notranslate"><span class="pre">get_time_by_key()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.get_transition_counts"><code class="docutils literal notranslate"><span class="pre">get_transition_counts()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.get_transition_matrix"><code class="docutils literal notranslate"><span class="pre">get_transition_matrix()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.get_transition_matrix_dataset"><code class="docutils literal notranslate"><span class="pre">get_transition_matrix_dataset()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.is_sleep_complete"><code class="docutils literal notranslate"><span class="pre">is_sleep_complete()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.plot_hypnogram"><code class="docutils literal notranslate"><span class="pre">plot_hypnogram()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.print_sleep_score"><code class="docutils literal notranslate"><span class="pre">print_sleep_score()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.score_night"><code class="docutils literal notranslate"><span class="pre">score_night()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.transition_matrix_to_change_matrix"><code class="docutils literal notranslate"><span class="pre">transition_matrix_to_change_matrix()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.valid_dataset_index_by_duration"><code class="docutils literal notranslate"><span class="pre">valid_dataset_index_by_duration()</span></code></a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -348,8 +382,146 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="hypnogram">
-<h1>Hypnogram<a class="headerlink" href="#hypnogram" title="Link to this heading">#</a></h1>
+  <section id="module-brainmaze_eeg.hypnogram">
+<span id="hypnogram"></span><h1>Hypnogram<a class="headerlink" href="#module-brainmaze_eeg.hypnogram" title="Link to this heading">#</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.hypnogram.correct_hypnogram">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.hypnogram.</span></span><span class="sig-name descname"><span class="pre">correct_hypnogram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">60</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.hypnogram.correct_hypnogram" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.hypnogram.correct_rem">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.hypnogram.</span></span><span class="sig-name descname"><span class="pre">correct_rem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'AWAKE'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.hypnogram.correct_rem" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.hypnogram.do_median_filtration">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.hypnogram.</span></span><span class="sig-name descname"><span class="pre">do_median_filtration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.hypnogram.do_median_filtration" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.hypnogram.fill_nonrem_voids">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.hypnogram.</span></span><span class="sig-name descname"><span class="pre">fill_nonrem_voids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'AWAKE'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.hypnogram.fill_nonrem_voids" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.hypnogram.fill_same_voids">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.hypnogram.</span></span><span class="sig-name descname"><span class="pre">fill_same_voids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'AWAKE'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.hypnogram.fill_same_voids" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.hypnogram.fill_sleep_voids">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.hypnogram.</span></span><span class="sig-name descname"><span class="pre">fill_sleep_voids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'AWAKE'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.hypnogram.fill_sleep_voids" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.hypnogram.fill_wakerem_voids">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.hypnogram.</span></span><span class="sig-name descname"><span class="pre">fill_wakerem_voids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'AWAKE'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.hypnogram.fill_wakerem_voids" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.hypnogram.get_awakening_time">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.hypnogram.</span></span><span class="sig-name descname"><span class="pre">get_awakening_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_awake_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">90</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_sleep_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">awake_tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'AWAKE'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sleep_cycle_tags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['REM',</span> <span class="pre">'N2',</span> <span class="pre">'N3']</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.hypnogram.get_awakening_time" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.hypnogram.get_fell_asleep_time">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.hypnogram.</span></span><span class="sig-name descname"><span class="pre">get_fell_asleep_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_sleep_check</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_awake_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">awake_tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'AWAKE'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sleep_cycle_tags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['REM',</span> <span class="pre">'N1',</span> <span class="pre">'N2',</span> <span class="pre">'N3']</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.hypnogram.get_fell_asleep_time" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.hypnogram.get_hypnogram_datarate">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.hypnogram.</span></span><span class="sig-name descname"><span class="pre">get_hypnogram_datarate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.hypnogram.get_hypnogram_datarate" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.hypnogram.get_number_of_awakenings">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.hypnogram.</span></span><span class="sig-name descname"><span class="pre">get_number_of_awakenings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">awake_tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'AWAKE'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n1_tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'N1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sleep_tags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['N2',</span> <span class="pre">'N3',</span> <span class="pre">'REM']</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.hypnogram.get_number_of_awakenings" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.hypnogram.get_number_of_sleep_stages">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.hypnogram.</span></span><span class="sig-name descname"><span class="pre">get_number_of_sleep_stages</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tags</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'REM'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.hypnogram.get_number_of_sleep_stages" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.hypnogram.get_rem_latency">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.hypnogram.</span></span><span class="sig-name descname"><span class="pre">get_rem_latency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rem_tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'REM'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">awake_tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'AWAKE'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.hypnogram.get_rem_latency" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.hypnogram.get_stage_times">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.hypnogram.</span></span><span class="sig-name descname"><span class="pre">get_stage_times</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.hypnogram.get_stage_times" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.hypnogram.get_stage_times_dataset">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.hypnogram.</span></span><span class="sig-name descname"><span class="pre">get_stage_times_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hypnograms</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.hypnogram.get_stage_times_dataset" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.hypnogram.get_time_by_key">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.hypnogram.</span></span><span class="sig-name descname"><span class="pre">get_time_by_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.hypnogram.get_time_by_key" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.hypnogram.get_transition_counts">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.hypnogram.</span></span><span class="sig-name descname"><span class="pre">get_transition_counts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hyp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">states</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['AWAKE',</span> <span class="pre">'N1',</span> <span class="pre">'N2',</span> <span class="pre">'N3',</span> <span class="pre">'REM']</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.hypnogram.get_transition_counts" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.hypnogram.get_transition_matrix">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.hypnogram.</span></span><span class="sig-name descname"><span class="pre">get_transition_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hyp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">states</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['AWAKE',</span> <span class="pre">'N1',</span> <span class="pre">'N2',</span> <span class="pre">'N3',</span> <span class="pre">'REM']</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.hypnogram.get_transition_matrix" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.hypnogram.get_transition_matrix_dataset">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.hypnogram.</span></span><span class="sig-name descname"><span class="pre">get_transition_matrix_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hypnograms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">states</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['AWAKE',</span> <span class="pre">'N1',</span> <span class="pre">'N2',</span> <span class="pre">'N3',</span> <span class="pre">'REM']</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.hypnogram.get_transition_matrix_dataset" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.hypnogram.is_sleep_complete">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.hypnogram.</span></span><span class="sig-name descname"><span class="pre">is_sleep_complete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">awake_tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'AWAKE'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.hypnogram.is_sleep_complete" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.hypnogram.plot_hypnogram">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.hypnogram.</span></span><span class="sig-name descname"><span class="pre">plot_hypnogram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orig_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hypnogram_values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hypnogram_colors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fontsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">12</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">night_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">22</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.hypnogram.plot_hypnogram" title="Link to this definition">#</a></dt>
+<dd><p>Creates a Matplotlib figure of spectrogram from the annotations. Time must be in a time-zone aware format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>orig_df</strong> (<em>annotations</em>)</p></li>
+<li><p><strong>hypnogram_values</strong> (<em>dict</em>) – dict of a y-axis values for each hypnogram state</p></li>
+<li><p><strong>hypnogram_colors</strong> (<em>dict</em>) – dict of color hex codes for each hypnogram state</p></li>
+<li><p><strong>fontsize</strong> (<em>int</em>) – Fontsize</p></li>
+<li><p><strong>fig</strong> (<em>figure</em>) – Already existing figure object.</p></li>
+<li><p><strong>night_start</strong> (<em>int</em>) – A hour when does the night begin</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.hypnogram.print_sleep_score">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.hypnogram.</span></span><span class="sig-name descname"><span class="pre">print_sleep_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">score</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.hypnogram.print_sleep_score" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.hypnogram.score_night">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.hypnogram.</span></span><span class="sig-name descname"><span class="pre">score_night</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.hypnogram.score_night" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.hypnogram.transition_matrix_to_change_matrix">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.hypnogram.</span></span><span class="sig-name descname"><span class="pre">transition_matrix_to_change_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.hypnogram.transition_matrix_to_change_matrix" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.hypnogram.valid_dataset_index_by_duration">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.hypnogram.</span></span><span class="sig-name descname"><span class="pre">valid_dataset_index_by_duration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hypnograms</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filt_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.hypnogram.valid_dataset_index_by_duration" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
 </section>
 
 
@@ -364,20 +536,20 @@ document.write(`
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="crp.html"
+       href="features.wave_detector.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">CRP</p>
+        <p class="prev-next-title">Wave Detector</p>
       </div>
     </a>
     <a class="right-next"
-       href="features.html"
+       href="preprocessing.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Annotations</p>
+        <p class="prev-next-title">Preprocessing</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -387,6 +559,45 @@ document.write(`
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.correct_hypnogram"><code class="docutils literal notranslate"><span class="pre">correct_hypnogram()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.correct_rem"><code class="docutils literal notranslate"><span class="pre">correct_rem()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.do_median_filtration"><code class="docutils literal notranslate"><span class="pre">do_median_filtration()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.fill_nonrem_voids"><code class="docutils literal notranslate"><span class="pre">fill_nonrem_voids()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.fill_same_voids"><code class="docutils literal notranslate"><span class="pre">fill_same_voids()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.fill_sleep_voids"><code class="docutils literal notranslate"><span class="pre">fill_sleep_voids()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.fill_wakerem_voids"><code class="docutils literal notranslate"><span class="pre">fill_wakerem_voids()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.get_awakening_time"><code class="docutils literal notranslate"><span class="pre">get_awakening_time()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.get_fell_asleep_time"><code class="docutils literal notranslate"><span class="pre">get_fell_asleep_time()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.get_hypnogram_datarate"><code class="docutils literal notranslate"><span class="pre">get_hypnogram_datarate()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.get_number_of_awakenings"><code class="docutils literal notranslate"><span class="pre">get_number_of_awakenings()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.get_number_of_sleep_stages"><code class="docutils literal notranslate"><span class="pre">get_number_of_sleep_stages()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.get_rem_latency"><code class="docutils literal notranslate"><span class="pre">get_rem_latency()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.get_stage_times"><code class="docutils literal notranslate"><span class="pre">get_stage_times()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.get_stage_times_dataset"><code class="docutils literal notranslate"><span class="pre">get_stage_times_dataset()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.get_time_by_key"><code class="docutils literal notranslate"><span class="pre">get_time_by_key()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.get_transition_counts"><code class="docutils literal notranslate"><span class="pre">get_transition_counts()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.get_transition_matrix"><code class="docutils literal notranslate"><span class="pre">get_transition_matrix()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.get_transition_matrix_dataset"><code class="docutils literal notranslate"><span class="pre">get_transition_matrix_dataset()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.is_sleep_complete"><code class="docutils literal notranslate"><span class="pre">is_sleep_complete()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.plot_hypnogram"><code class="docutils literal notranslate"><span class="pre">plot_hypnogram()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.print_sleep_score"><code class="docutils literal notranslate"><span class="pre">print_sleep_score()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.score_night"><code class="docutils literal notranslate"><span class="pre">score_night()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.transition_matrix_to_change_matrix"><code class="docutils literal notranslate"><span class="pre">transition_matrix_to_change_matrix()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#brainmaze_eeg.hypnogram.valid_dataset_index_by_duration"><code class="docutils literal notranslate"><span class="pre">valid_dataset_index_by_duration()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>

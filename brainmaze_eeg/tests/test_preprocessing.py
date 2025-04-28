@@ -1,3 +1,4 @@
+
 import pytest
 
 import numpy as np
@@ -5,51 +6,70 @@ import scipy.signal as signal
 
 
 from brainmaze_eeg.preprocessing import (
-    mask_segment_with_nans,
-    filter_powerline_notch,
-    detect_outlier_noise,
-    detect_powerline,
-    detect_flat_line,
-    detect_stim,
-    substitute_noise_with_nan
+    replace_nans_with_median,
+    channel_data_rate_thresholding,
+    filter_powerline,
+    detect_outlier_segments,
+    detect_powerline_segments,
+    detect_flat_line_segments,
+    detect_stim_segments,
+    mask_segments_with_nans
 )
 
-def test_mask_signal_with_nans():
+def test_replace_nans_with_medians():
+    # Test 2D input with drop rate below threshold
+    x_2d = np.array([[np.nan, 2.0, 2.0, 2.0, np.nan], [4.0, 5.0, 6.0, np.nan, np.nan]])
+
+    result_2d, mask = replace_nans_with_median(x_2d)
+    assert (np.isnan(result_2d).sum(1) == [0, 0]).all(), "2D input below threshold should not be masked"
+    assert result_2d[0, 0] == result_2d[0, -1] == 2.0, "First element should be 2.0"
+    assert result_2d[1, -1] == result_2d[1, -2] == 5.0, "First element should be 4.0"
+
+    x_1d_nans = np.array([np.nan, np.nan, np.nan, np.nan, np.nan])
+    result_1d, mask = replace_nans_with_median(x_1d_nans)
+    assert np.isnan(result_1d).sum() == 5, "1D input with all NaNs should be fully masked"
+
+    x_1d_num = np.random.randn(10)
+    result_1d, mask = replace_nans_with_median(x_1d_num)
+    assert np.isnan(result_1d).sum() == 0, "1D input with all NaNs should be fully masked"
+    assert (result_1d == x_1d_num).all()
+
+def test_channel_data_rate_thresholding():
     # Test 1D input with drop rate below threshold
     x_1d = np.array([1.0, 2.0, np.nan, 4.0, 5.0])
     dr_threshold = 0.5
-    result = mask_segment_with_nans(x_1d, dr_threshold)
+    result = channel_data_rate_thresholding(x_1d, dr_threshold)
     assert np.isnan(result).sum() == np.isnan(x_1d).sum(), "1D input below threshold should not be masked"
 
     # Test 1D input with drop rate above threshold
     x_1d_high_drop = np.array([np.nan, np.nan, 3.0, np.nan, np.nan])
     dr_threshold = 0.5
-    result = mask_segment_with_nans(x_1d_high_drop, dr_threshold)
+    result = channel_data_rate_thresholding(x_1d_high_drop, dr_threshold)
     assert np.all(np.isnan(result)), "1D input above threshold should be fully masked"
 
     # Test 2D input with drop rate below threshold
     x_2d = np.array([[1.0, 2.0, np.nan], [4.0, 5.0, 6.0]])
     dr_threshold = 0.5
-    result = mask_segment_with_nans(x_2d, dr_threshold)
+    result = channel_data_rate_thresholding(x_2d, dr_threshold)
     assert np.isnan(result).sum() == np.isnan(x_2d).sum(), "2D input below threshold should not be masked"
 
     # Test 2D input with drop rate above threshold
     x_2d_high_drop = np.array([[np.nan, np.nan, 3.0], [np.nan, np.nan, np.nan]])
     dr_threshold = 0.5
-    result = mask_segment_with_nans(x_2d_high_drop, dr_threshold)
+    result = channel_data_rate_thresholding(x_2d_high_drop, dr_threshold)
     assert np.all(np.isnan(result[0, :])), "2D input row above threshold should be fully masked"
     assert np.all(np.isnan(result[1, :])), "2D input row above threshold should be fully masked"
 
     # Test 2D input with mixed drop rates
     x_2d_mixed = np.array([[1.0, 2.0, np.nan], [np.nan, np.nan, np.nan]])
     dr_threshold = 0.5
-    result = mask_segment_with_nans(x_2d_mixed, dr_threshold)
+    result = channel_data_rate_thresholding(x_2d_mixed, dr_threshold)
     assert np.isnan(result[0, :]).sum() == 1, "First row should have one NaN"
     assert np.all(np.isnan(result[1, :])), "Second row should be fully masked"
     assert np.isnan(result).sum() == 4, "Total NaNs should be 4"
 
 
-def test_filter_powerline_notch():
+def test_filter_powerline():
     # Parameters
     fs = 1000  # Sampling frequency in Hz
     duration = 2  # Duration of the signal in seconds
@@ -68,8 +88,8 @@ def test_filter_powerline_notch():
     signal_with_nan[100:1000] = np.nan
 
     # Apply the notch filter
-    filtered_signal = filter_powerline_notch(signal_with_noise, fs, frequency_powerline)
-    filtered_signal_with_nan = filter_powerline_notch(signal_with_nan, fs, frequency_powerline)
+    filtered_signal = filter_powerline(signal_with_noise, fs, frequency_powerline)
+    filtered_signal_with_nan = filter_powerline(signal_with_nan, fs, frequency_powerline)
 
     assert np.isnan(filtered_signal_with_nan).sum() == np.isnan(signal_with_nan).sum(), "Filtered signal with NaNs should have the same number of NaNs"
     assert np.nansum(np.abs(filtered_signal_with_nan)) < np.nansum(np.abs(signal_with_nan)), "Filtered signal with NaNs should have smaller power than original with 60 Hz"
@@ -93,7 +113,7 @@ def test_filter_powerline_notch():
     print(f"Test passed: Power at 60 Hz reduced from {power_before:.2e} to {power_after:.2e}")
 
 
-def test_detect_powerline():
+def test_detect_powerline_segments():
     # Parameters
     fs = 250  # Sampling frequency in Hz
     duration = 100  # Duration of the signal in seconds
@@ -106,16 +126,16 @@ def test_detect_powerline():
     x = 0.1*np.random.randn(signal_60hz.shape[0])
     x[:int(x.shape[0]/2)] += signal_60hz[:int(x.shape[0]/2)]
 
-    y = detect_powerline(x, fs, detection_window=1.0, powerline_freq=60)
+    y = detect_powerline_segments(x, fs, detection_window=1.0, powerline_freq=60)
     assert y.sum() == y.shape[0] / 2
 
     x_merged = np.stack([x, x[::-1]], 0)
-    y_merged = detect_powerline(x_merged, fs, detection_window=1.0, powerline_freq=60)
+    y_merged = detect_powerline_segments(x_merged, fs, detection_window=1.0, powerline_freq=60)
     assert np.all(y_merged[0] == y)
     assert np.all(y_merged[1] == y[::-1])
 
 
-def test_detect_outlier_noise():
+def test_detect_outlier_segments():
     fs = 250  # Sampling frequency in Hz
     duration = 60  # Duration of the signal in seconds
     idx = np.arange(fs+10, fs + 20)
@@ -128,7 +148,7 @@ def test_detect_outlier_noise():
 
     x = np.stack([x, x[::-1]], 0)
 
-    y = detect_outlier_noise(x, fs, detection_window=1)
+    y = detect_outlier_segments(x, fs, detection_window=1)
 
     assert y.shape == (2, duration), "Output shape should be (2, duration)"
     assert y[0, 0] == False, "1st second segment should not be detected as not noise"
@@ -137,7 +157,7 @@ def test_detect_outlier_noise():
     assert np.all(y[0] == y[1][::-1]), "Output should be the same for both channels"
 
 
-def test_detect_flat_line():
+def test_detect_flat_line_segments():
     fs = 250
     duration = 60
 
@@ -146,7 +166,7 @@ def test_detect_flat_line():
 
     x = np.stack([x, x[::-1]], 0)
 
-    y = detect_flat_line(x, fs, detection_window=1)
+    y = detect_flat_line_segments(x, fs, detection_window=1)
 
     assert y.shape == (2, duration,), "Output shape should be (duration,)"
     assert y[0, 0] == False, "1st second segment should not be detected as flat line"
@@ -154,7 +174,7 @@ def test_detect_flat_line():
     assert y[0, 2] == False, "3rd second segment should not be detected as flat line"
     assert np.all(y[0] == y[1][::-1]), "Output should be the same for both channels"
 
-def test_detect_stim():
+def test_detect_stim_segments():
     # Parameters
     fs = 250  # Hz
     duration = 60  # seconds
@@ -169,18 +189,19 @@ def test_detect_stim():
     x = 0.1*np.random.randn(signal_145hz.shape[0])
     x[int(stim_start_sec*fs):int(stim_end_sec*fs)] += signal_145hz[int(stim_start_sec*fs):int(stim_end_sec*fs)]
 
-    y, psd_sum = detect_stim(x, fs, detection_window=detection_window)
+    y, psd_sum = detect_stim_segments(x, fs, detection_window=detection_window)
 
     assert y.shape[0] == x.shape[0]/fs/detection_window, ""
     assert np.all(y[int(stim_start_sec/detection_window):int(stim_end_sec/detection_window)] == 1)
 
     x2d = np.stack([x, x[::-1]], 0)
-    y2, psd_sum2 = detect_stim(x2d, fs, detection_window=detection_window)
+    y2, psd_sum2 = detect_stim_segments(x2d, fs, detection_window=detection_window)
 
     assert np.all(y2[0] == y)
     assert np.all(y2[1, int((duration-stim_end_sec)/detection_window):int((duration-stim_start_sec)/detection_window)] == 1)
 
-def test_noise_substitution():
+
+def test_mask_segments_with_nans():
     fs = 250
     n_sec = 60
     n_samples = fs * n_sec
@@ -192,7 +213,7 @@ def test_noise_substitution():
     merged_noise[0, [1, 3]] = 1
     merged_noise[1, [2]] = 1
 
-    x_clean2d = substitute_noise_with_nan(x2d, merged_noise, fs, n_sec)
+    x_clean2d = mask_segments_with_nans(x2d, merged_noise, fs, n_sec)
 
     assert np.isnan(x_clean2d[0, 1 * fs:2 * fs]).all()
     assert np.isnan(x_clean2d[0, 3 * fs:4 * fs]).all()
@@ -204,13 +225,10 @@ def test_noise_substitution():
     x = np.random.randn(n_samples)
     merged_noise = np.zeros(n_sec)
     merged_noise[1] = 1  # noise in second 1
-    x_clean = substitute_noise_with_nan(x, merged_noise, fs, n_sec)
+    x_clean = mask_segments_with_nans(x, merged_noise, fs, n_sec)
 
     assert np.isnan(x_clean[fs:2 * fs]).all()
     assert ~(np.isnan(x_clean[2 * fs:]).any())
-
-
-
 
 
 

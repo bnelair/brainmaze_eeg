@@ -6,10 +6,9 @@ from typing import Tuple
 from brainmaze_utils.signal import PSD, buffer
 
 
-def mask_segment_with_nans(x: np.typing.NDArray[np.float64], data_rate_threshold: float=0.1):
+def channel_data_rate_thresholding(x: np.typing.NDArray[np.float64], data_rate_threshold: float=0.1):
     """
-    Masks signals with NaNs based on a nan rate threshold. If data rate (non-nan values) is below the threshold,
-    the entire row is masked with NaNs.
+    Masks the whole channel [nchans, nsamples] with nans if the channel data rate is below the threshold.
 
     Parameters:
         x (np.ndarray): Input signal, either 1D or 2D array.
@@ -39,7 +38,50 @@ def mask_segment_with_nans(x: np.typing.NDArray[np.float64], data_rate_threshold
     return x
 
 
-def filter_powerline_notch(x: np.typing.NDArray[np.float64], fs: float, frequency_powerline: float=60):
+def replace_nans_with_median(x: np.typing.NDArray[np.float64]):
+    """
+    Replaces NaN values in the input signal with the median of the non-NaN values along each channel.
+
+    Parameters:
+        x (np.ndarray): Input signal, either 1D or 2D array.
+
+    Returns:
+        Tuple[np.ndarray, np.ndarray, np.ndarray]: A tuple containing:
+            - processed_signal (np.ndarray): Signal with NaN values replaced by the median.
+            - data_rate (np.ndarray): Data rate for each channel, calculated as the proportion of non-NaN values.
+            - mask (np.ndarray): Boolean mask indicating the positions of NaN values in the original signal.
+
+    Raises:
+        ValueError: If the input signal is not 1D or 2D.
+    """
+
+    ndim = x.ndim
+
+    if ndim == 0 or ndim > 2:
+        raise ValueError("Input 'x' must be a 1D or nD numpy array.")
+
+    if x.ndim == 1:
+        x = x[np.newaxis, :]  # Add a new axis to make it 2D
+
+    mask = np.isnan(x)
+
+    if not mask.any(): # if no nans, just return
+        if ndim == 1:
+            x = x[0]
+            mask = mask[0]
+
+        return x, mask
+
+    med_vals = np.nanmedian(x, axis=1, keepdims=True)
+    x = np.where(mask, med_vals, x)
+
+    if ndim == 1:
+        x = x[0]
+
+    return x, mask
+
+
+def filter_powerline(x: np.typing.NDArray[np.float64], fs: float, frequency_powerline: float=60):
     """
     Filters powerline noise from the input signal using a notch filter. The function replaces NaN values with the
     median and returns nan values after filtering. This can possibly cause ringing around artifacts and edges.
@@ -68,7 +110,7 @@ def filter_powerline_notch(x: np.typing.NDArray[np.float64], fs: float, frequenc
     return x
 
 
-def detect_powerline(
+def detect_powerline_segments(
         x: np.typing.NDArray[np.float64],
         fs: float,
         detection_window: float = 0.5,
@@ -129,8 +171,7 @@ def detect_powerline(
     return detected_noise
 
 
-
-def detect_outlier_noise(
+def detect_outlier_segments(
         x: np.typing.NDArray[np.float64],
         fs: float,
         detection_window: float = 0.5,
@@ -176,8 +217,7 @@ def detect_outlier_noise(
 
     return detected_noise
 
-
-def detect_flat_line(
+def detect_flat_line_segments(
         x: np.typing.NDArray[np.float64],
         fs: float,
         detection_window:float = 0.5,
@@ -218,8 +258,8 @@ def detect_flat_line(
     return detected_flat_line
 
 
-def detect_stim(x: np.typing.NDArray[np.float64], fs: float, detection_window:float = 1,
-                detection_threshold:float = 2000, freq_band: Tuple[float, float] = (80, 110,)):
+def detect_stim_segments(x: np.typing.NDArray[np.float64], fs: float, detection_window:float = 1,
+                         detection_threshold:float = 2000, freq_band: Tuple[float, float] = (80, 110,)):
     """
     Detects stimulation artifacts in the input signal. Calculates differential signal of the input signal.
     Spectral power of the differential signal between the bands provided in frequency band is
@@ -269,8 +309,8 @@ def detect_stim(x: np.typing.NDArray[np.float64], fs: float, detection_window:fl
     return detected_stim, psd_sum
 
 
-def substitute_noise_with_nan(x: np.typing.NDArray[np.float64], merged_noise: np.typing.NDArray[np.float64],
-                              fs: float, n_sec: float):
+def mask_segments_with_nans(x: np.typing.NDArray[np.float64], merged_noise: np.typing.NDArray[np.float64],
+                            fs: float, n_sec: float):
     """
     Masks EEG signal segments with noise and stimulation artifacts by setting them to NaN.
 
@@ -324,12 +364,3 @@ def substitute_noise_with_nan(x: np.typing.NDArray[np.float64], merged_noise: np
     if ndim == 1:
         x_sub = x_sub[0]
     return x_sub
-
-
-
-
-
-
-
-
-
