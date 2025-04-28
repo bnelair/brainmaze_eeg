@@ -203,10 +203,11 @@ def test_detect_stim_segments():
 
 
 def test_mask_segments_with_nans():
-    fs = 250
+    fs = 500
     n_sec = 60
     n_samples = fs * n_sec
     n_channels = 2
+    segment_length = 1
 
     x2d = np.random.randn(n_channels, n_samples)
 
@@ -214,7 +215,7 @@ def test_mask_segments_with_nans():
     merged_noise[0, [1, 3]] = 1
     merged_noise[1, [2]] = 1
 
-    x_clean2d = mask_segments_with_nans(x2d, merged_noise, fs, n_sec)
+    x_clean2d = mask_segments_with_nans(x2d, merged_noise, fs, segment_length)
 
     assert np.isnan(x_clean2d[0, 1 * fs:2 * fs]).all()
     assert np.isnan(x_clean2d[0, 3 * fs:4 * fs]).all()
@@ -225,11 +226,12 @@ def test_mask_segments_with_nans():
 
     x = np.random.randn(n_samples)
     merged_noise = np.zeros(n_sec)
-    merged_noise[1] = 1  # noise in second 1
-    x_clean = mask_segments_with_nans(x, merged_noise, fs, n_sec)
+    merged_noise[20] = 1  # noise in second 1
+    x_clean = mask_segments_with_nans(x, merged_noise, fs, segment_length)
 
-    assert np.isnan(x_clean[fs:2 * fs]).all()
-    assert ~(np.isnan(x_clean[2 * fs:]).any())
+    assert (~np.isnan(x_clean[fs:20 * fs])).all()
+    assert np.isnan(x_clean[20 * fs: 21*fs]).all()
+    assert (~np.isnan(x_clean[21*fs:])).all()
 
 
 def test_detection_dilatation():
