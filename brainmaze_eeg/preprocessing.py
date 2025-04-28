@@ -2,6 +2,7 @@
 import numpy as np
 import scipy.signal as signal
 from typing import Tuple
+from scipy.ndimage import binary_dilation
 
 from brainmaze_utils.signal import PSD, buffer
 
@@ -364,3 +365,32 @@ def mask_segments_with_nans(x: np.typing.NDArray[np.float64], merged_noise: np.t
     if ndim == 1:
         x_sub = x_sub[0]
     return x_sub
+
+
+def detection_dilatation(mask: np.ndarray, extend_left: int = 2, extend_right: int = 2):
+    """
+    Extends True values in a boolean mask by a fixed number of positions to the left and right.
+
+    Parameters:
+        mask (np.ndarray): 1D or 2D boolean array indicating detection.
+        extend_left (int): Number of positions to extend left of each detection.
+        extend_right (int): Number of positions to extend right of each detection.
+
+    Returns:
+        np.ndarray: Extended boolean mask with same shape.
+
+    Raises:
+        ValueError: If the input signal is not 1D or 2D.
+    """
+    total_extend = extend_left + extend_right + 1
+    structure = np.ones(total_extend, dtype=int)
+
+    if mask.ndim == 1:
+        return binary_dilation(mask, structure=structure, origin=0).astype(int)
+    elif mask.ndim == 2:
+        return np.array([
+            binary_dilation(row, structure=structure, origin=0)
+            for row in mask
+        ]).astype(int)
+    else:
+        raise ValueError("Input 'mask' must be 1D or 2D.")

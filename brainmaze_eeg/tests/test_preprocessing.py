@@ -13,7 +13,8 @@ from brainmaze_eeg.preprocessing import (
     detect_powerline_segments,
     detect_flat_line_segments,
     detect_stim_segments,
-    mask_segments_with_nans
+    mask_segments_with_nans,
+    detection_dilatation
 )
 
 def test_replace_nans_with_medians():
@@ -231,7 +232,21 @@ def test_mask_segments_with_nans():
     assert ~(np.isnan(x_clean[2 * fs:]).any())
 
 
+def test_detection_dilatation():
+    nsec = 60
+    det_vector = np.zeros(nsec)
+    det_vector[10] = 1
+    det_vector[-1] = 1
 
+    det_vector_extend = detection_dilatation(det_vector, extend_left=2, extend_right=2)
+    assert np.sum(det_vector_extend) == 8
+    assert np.all(det_vector_extend[8:13] == 1)
+    assert np.all(det_vector_extend[57:59] == 1)
+    assert np.all(det_vector_extend[[7,13,56]] == 0)
+
+    det_matrix = np.stack([det_vector, det_vector[::-1]], 0)
+    det_matrix_extend = detection_dilatation(det_matrix, extend_left=2, extend_right=2)
+    assert np.all(np.sum(det_matrix_extend, axis=1) == 8)
 
 
 
