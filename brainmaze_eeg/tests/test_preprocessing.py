@@ -127,11 +127,11 @@ def test_detect_powerline_segments():
     x = 0.1*np.random.randn(signal_60hz.shape[0])
     x[:int(x.shape[0]/2)] += signal_60hz[:int(x.shape[0]/2)]
 
-    y = detect_powerline_segments(x, fs, detection_window=1.0, powerline_freq=60)
+    y = detect_powerline_segments(x, fs, window_s=1.0, powerline_freq=60)
     assert y.sum() == y.shape[0] / 2
 
     x_merged = np.stack([x, x[::-1]], 0)
-    y_merged = detect_powerline_segments(x_merged, fs, detection_window=1.0, powerline_freq=60)
+    y_merged = detect_powerline_segments(x_merged, fs, window_s=1.0, powerline_freq=60)
     assert np.all(y_merged[0] == y)
     assert np.all(y_merged[1] == y[::-1])
 
@@ -149,7 +149,7 @@ def test_detect_outlier_segments():
 
     x = np.stack([x, x[::-1]], 0)
 
-    y = detect_outlier_segments(x, fs, detection_window=1)
+    y = detect_outlier_segments(x, fs, window_s=1)
 
     assert y.shape == (2, duration), "Output shape should be (2, duration)"
     assert y[0, 0] == False, "1st second segment should not be detected as not noise"
@@ -167,7 +167,7 @@ def test_detect_flat_line_segments():
 
     x = np.stack([x, x[::-1]], 0)
 
-    y = detect_flat_line_segments(x, fs, detection_window=1)
+    y = detect_flat_line_segments(x, fs, window_s=1)
 
     assert y.shape == (2, duration,), "Output shape should be (duration,)"
     assert y[0, 0] == False, "1st second segment should not be detected as flat line"
@@ -190,13 +190,13 @@ def test_detect_stim_segments():
     x = 0.1*np.random.randn(signal_145hz.shape[0])
     x[int(stim_start_sec*fs):int(stim_end_sec*fs)] += signal_145hz[int(stim_start_sec*fs):int(stim_end_sec*fs)]
 
-    y, psd_sum = detect_stim_segments(x, fs, detection_window=detection_window)
+    y, psd_sum = detect_stim_segments(x, fs, window_s=detection_window)
 
     assert y.shape[0] == x.shape[0]/fs/detection_window, ""
     assert np.all(y[int(stim_start_sec/detection_window):int(stim_end_sec/detection_window)] == 1)
 
     x2d = np.stack([x, x[::-1]], 0)
-    y2, psd_sum2 = detect_stim_segments(x2d, fs, detection_window=detection_window)
+    y2, psd_sum2 = detect_stim_segments(x2d, fs, window_s=detection_window)
 
     assert np.all(y2[0] == y)
     assert np.all(y2[1, int((duration-stim_end_sec)/detection_window):int((duration-stim_start_sec)/detection_window)] == 1)

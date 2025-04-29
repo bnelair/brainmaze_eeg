@@ -7,7 +7,7 @@ from scipy.ndimage import binary_dilation
 from brainmaze_utils.signal import PSD, buffer
 
 
-def channel_data_rate_thresholding(x: np.typing.NDArray[np.float64], data_rate_threshold: float=0.1):
+def channel_data_rate_thresholding(x: np.typing.NDArray[np.float64], threshold_data_rate: float=0.1):
     """
     Masks the whole channel [nchans, nsamples] with nans if the channel data rate is below the threshold.
 
@@ -30,7 +30,7 @@ def channel_data_rate_thresholding(x: np.typing.NDArray[np.float64], data_rate_t
     if x.ndim == 1:
         x = x[np.newaxis, :]  # Add a new axis to make it 2D
 
-    ch_mask = 1 - (np.isnan(x).sum(axis=1) / x.shape[1]) <= data_rate_threshold
+    ch_mask = 1 - (np.isnan(x).sum(axis=1) / x.shape[1]) <= threshold_data_rate
     x[ch_mask, :] = np.nan
 
     if ndim == 1:
@@ -114,7 +114,7 @@ def filter_powerline(x: np.typing.NDArray[np.float64], fs: float, frequency_powe
 def detect_powerline_segments(
         x: np.typing.NDArray[np.float64],
         fs: float,
-        detection_window: float = 0.5,
+        window_s: float = 0.5,
         powerline_freq:float = 60,
         threshold_ratio:float = 1000
 ):
@@ -126,7 +126,7 @@ def detect_powerline_segments(
     Parameters:
         x (np.ndarray): Input signal, either 1D or 2D array.
         fs (float): Sampling frequency.
-        detection_window (float): Length of the segment in seconds. Default is 0.5 seconds.
+        window_s (float): Length of the segment in seconds. Default is 0.5 seconds.
         powerline_freq (float): Frequency of the powerline noise. Default is 60 Hz.
         threshold_ratio (float): Threshold ratio for detection how many times the power of the powerline noise is higher than average power in 2 Hz - 40 Hz band. Default is 1000.
 
@@ -144,7 +144,7 @@ def detect_powerline_segments(
         x = x[np.newaxis, :]
 
     xb =  np.array([
-        buffer(x_, fs, segm_size=detection_window, drop=True) for x_ in x
+        buffer(x_, fs, segm_size=window_s, drop=True) for x_ in x
     ])
     xb = xb - np.nanmean(xb, axis=2, keepdims=True)
     f, pxx = PSD(xb, fs)
@@ -175,7 +175,7 @@ def detect_powerline_segments(
 def detect_outlier_segments(
         x: np.typing.NDArray[np.float64],
         fs: float,
-        detection_window: float = 0.5,
+        window_s: float = 0.5,
         threshold: float = 10
 ):
     """
@@ -186,7 +186,7 @@ def detect_outlier_segments(
     Parameters:
         x (np.ndarray): Input signal, either 1D or 2D array.
         fs (float): Sampling frequency.
-        detection_window (float): Length of the segment in seconds. Default is 0.5 seconds.
+        window_s (float): Length of the segment in seconds. Default is 0.5 seconds.
         threshold (float): Threshold for detecting outliers. Default is 10.
 
     Returns:
@@ -210,7 +210,7 @@ def detect_outlier_segments(
     b_idx = np.abs(x) > threshold_tukey[:, np.newaxis]
 
     detected_noise = np.array([
-        buffer(b_ch, fs, segm_size=detection_window, drop=True).sum(1) > 1 for b_ch in b_idx
+        buffer(b_ch, fs, segm_size=window_s, drop=True).sum(1) > 1 for b_ch in b_idx
     ])
 
     if ndim == 1:
@@ -221,7 +221,7 @@ def detect_outlier_segments(
 def detect_flat_line_segments(
         x: np.typing.NDArray[np.float64],
         fs: float,
-        detection_window:float = 0.5,
+        window_s:float = 0.5,
         threshold: float = 0.5e-6
 ):
     """
@@ -232,7 +232,7 @@ def detect_flat_line_segments(
     Parameters:
         x (np.ndarray): Input signal, either 1D or 2D array.
         fs (float): Sampling frequency.
-        detection_window (float): Length of the segment in seconds. Default is 0.5 seconds.
+        window_s (float): Length of the segment in seconds. Default is 0.5 seconds.
         threshold (float): Threshold for detecting flat-line segments. Default is 0.5e-6.
 
     Returns:
@@ -249,7 +249,7 @@ def detect_flat_line_segments(
         x = x[np.newaxis, :]
 
     xb = np.array([
-        buffer(x_, fs, segm_size=detection_window, drop=True) for x_ in x
+        buffer(x_, fs, segm_size=window_s, drop=True) for x_ in x
     ])
     detected_flat_line = np.abs(np.diff(xb, axis=2).mean(axis=2)) < threshold
 
@@ -259,8 +259,8 @@ def detect_flat_line_segments(
     return detected_flat_line
 
 
-def detect_stim_segments(x: np.typing.NDArray[np.float64], fs: float, detection_window:float = 1,
-                         detection_threshold:float = 2000, freq_band: Tuple[float, float] = (80, 110,)):
+def detect_stim_segments(x: np.typing.NDArray[np.float64], fs: float, window_s:float = 1,
+                         threshold_detection:float = 2000, freq_band: Tuple[float, float] = (80, 110,)):
     """
     Detects stimulation artifacts in the input signal. Calculates differential signal of the input signal.
     Spectral power of the differential signal between the bands provided in frequency band is
@@ -269,8 +269,8 @@ def detect_stim_segments(x: np.typing.NDArray[np.float64], fs: float, detection_
     Parameters:
         x (np.ndarray): Input signal, either 1D or 2D array.
         fs (float): Sampling frequency.
-        detection_window (float): Length of the segment in seconds. Default is 1 second.
-        detection_threshold (float): Threshold for detecting stimulation artifacts. Default is 2000.
+        window_s (float): Length of the segment in seconds. Default is 1 second.
+        threshold_detection (float): Threshold for detecting stimulation artifacts. Default is 2000.
         freq_band (tuple): Frequency band to consider for artifact detection (low, high). Default is (80, 110).
 
     Returns:
@@ -294,14 +294,14 @@ def detect_stim_segments(x: np.typing.NDArray[np.float64], fs: float, detection_
     )
 
     xb =  np.array([
-        buffer(x_, fs, segm_size=detection_window, drop=True) for x_ in x_diff
+        buffer(x_, fs, segm_size=window_s, drop=True) for x_ in x_diff
     ])
 
 
     freq, psd = PSD(xb, fs=fs)
     psd_hf = psd[:, :, (freq > freq_band[0]) & (freq < freq_band[1])]
     psd_sum = np.sum(psd_hf, axis=-1)
-    detected_stim = (psd_sum >= detection_threshold).astype(int)
+    detected_stim = (psd_sum >= threshold_detection).astype(int)
 
     if ndim == 1:
         detected_stim = detected_stim[0]
@@ -311,14 +311,14 @@ def detect_stim_segments(x: np.typing.NDArray[np.float64], fs: float, detection_
 
 
 def mask_segments_with_nans(x: np.typing.NDArray[np.float64], segment_mask: np.typing.NDArray[np.float64],
-                            fs: float, segment_len_s: float):
+                            fs: float, window_s: float):
     """
     Masks EEG signal segments based on provided mask setting them to NaN.
 
     Parameters:
         x (np.ndarray): 1D or 2D array of EEG data with shape (n_channels, n_samples).
         fs (int): Sampling rate of the EEG signal in Hz.
-        segment_len_s (int): Duration of each segment in seconds.
+        window_s (int): Duration of each segment in seconds.
         segment_mask (np.ndarray): Binary matrix of shape (n_channels, n_sec) where 1 indicates
                                        the presence of a stimulation artifact in that second.
 
@@ -341,7 +341,7 @@ def mask_segments_with_nans(x: np.typing.NDArray[np.float64], segment_mask: np.t
 
 
     n_channels, n_samples = x.shape
-    samples_per_segment = int(np.round(fs * segment_len_s))
+    samples_per_segment = int(np.round(fs * window_s))
 
     #  # Create index offsets for each segment
     window_len = segment_mask.shape[1]
