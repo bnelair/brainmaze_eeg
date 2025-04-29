@@ -49,7 +49,6 @@ def replace_nans_with_median(x: np.typing.NDArray[np.float64]):
     Returns:
         Tuple[np.ndarray, np.ndarray, np.ndarray]: A tuple containing:
             - processed_signal (np.ndarray): Signal with NaN values replaced by the median.
-            - data_rate (np.ndarray): Data rate for each channel, calculated as the proportion of non-NaN values.
             - mask (np.ndarray): Boolean mask indicating the positions of NaN values in the original signal.
 
     Raises:
@@ -87,8 +86,18 @@ def filter_powerline(x: np.typing.NDArray[np.float64], fs: float, frequency_powe
     Filters powerline noise from the input signal using a notch filter. The function replaces NaN values with the
     median and returns nan values after filtering. This can possibly cause ringing around artifacts and edges.
 
+    Parameters:
+        x (np.ndarray): Input signal, either 1D or 2D array.
+        fs (float): Sampling frequency.
+        frequency_powerline (float): Powerline noise frequency.
+
+    Returns:
+        np.ndarray: Signal filtered with notch filter.
+
+    Raises:
+        ValueError: If the input signal is not 1D or 2D.
+
     """
-    # substitute nans with median for 60Hz notch filter
 
     ndim = x.ndim
     if ndim == 0 or ndim > 2:
@@ -98,7 +107,7 @@ def filter_powerline(x: np.typing.NDArray[np.float64], fs: float, frequency_powe
         x = x[np.newaxis, :]
 
     mask = np.isnan(x)
-    x = np.where(mask, np.nanmedian(x, axis=1, keepdims=True), x)
+    x = np.where(mask, np.nanmedian(x, axis=1, keepdims=True), x)  # substitute nans with median for notch filter
 
     b, a = signal.iirnotch(w0=frequency_powerline, Q=10, fs=fs)
     x = signal.filtfilt(b, a, x, axis=1)
@@ -126,15 +135,14 @@ def detect_powerline_segments(
     Parameters:
         x (np.ndarray): Input signal, either 1D or 2D array.
         fs (float): Sampling frequency.
-        window_s (float): Length of the segment in seconds. Default is 0.5 seconds.
+        window_s (float): Length of the detection window in seconds. Default is 0.5 seconds.
         powerline_freq (float): Frequency of the powerline noise. Default is 60 Hz.
         threshold_ratio (float): Threshold ratio for detection how many times the power of the powerline noise is higher than average power in 2 Hz - 40 Hz band. Default is 1000.
 
     Returns:
-        np.ndarray: Boolean array indicating the presence of powerline noise for every 1 second segment.
+        np.ndarray: Boolean array indicating the presence of powerline noise for every detection window.
 
     """
-
 
     ndim = x.ndim
     if ndim == 0 or ndim > 2:
@@ -186,11 +194,11 @@ def detect_outlier_segments(
     Parameters:
         x (np.ndarray): Input signal, either 1D or 2D array.
         fs (float): Sampling frequency.
-        window_s (float): Length of the segment in seconds. Default is 0.5 seconds.
+        window_s (float): Length of the detection window in seconds. Default is 0.5 seconds.
         threshold (float): Threshold for detecting outliers. Default is 10.
 
     Returns:
-        np.ndarray: Boolean array indicating the presence of outlier noise for each segment.
+        np.ndarray: Boolean array indicating the presence of outlier noise for each detection window.
 
     Raises:
         ValueError: If the input signal is not 1D or 2D.
@@ -210,7 +218,7 @@ def detect_outlier_segments(
     b_idx = np.abs(x) > threshold_tukey[:, np.newaxis]
 
     detected_noise = np.array([
-        buffer(b_ch, fs, segm_size=window_s, drop=True).sum(1) > 1 for b_ch in b_idx
+        buffer(b_ch, fs, segm_size=window_s, drop=True).sum(1) >= 1 for b_ch in b_idx
     ])
 
     if ndim == 1:
@@ -232,7 +240,7 @@ def detect_flat_line_segments(
     Parameters:
         x (np.ndarray): Input signal, either 1D or 2D array.
         fs (float): Sampling frequency.
-        window_s (float): Length of the segment in seconds. Default is 0.5 seconds.
+        window_s (float): Length of the detection window in seconds. Default is 0.5 seconds.
         threshold (float): Threshold for detecting flat-line segments. Default is 0.5e-6.
 
     Returns:
@@ -269,7 +277,7 @@ def detect_stim_segments(x: np.typing.NDArray[np.float64], fs: float, window_s:f
     Parameters:
         x (np.ndarray): Input signal, either 1D or 2D array.
         fs (float): Sampling frequency.
-        window_s (float): Length of the segment in seconds. Default is 1 second.
+        window_s (float): Length of the detection window in seconds. Default is 1 second.
         threshold_detection (float): Threshold for detecting stimulation artifacts. Default is 2000.
         freq_band (tuple): Frequency band to consider for artifact detection (low, high). Default is (80, 110).
 
@@ -318,9 +326,9 @@ def mask_segments_with_nans(x: np.typing.NDArray[np.float64], segment_mask: np.t
     Parameters:
         x (np.ndarray): 1D or 2D array of EEG data with shape (n_channels, n_samples).
         fs (int): Sampling rate of the EEG signal in Hz.
-        window_s (int): Duration of each segment in seconds.
-        segment_mask (np.ndarray): Binary matrix of shape (n_channels, n_sec) where 1 indicates
-                                       the presence of a stimulation artifact in that second.
+        window_s (int): Duration of each masking segment in seconds.
+        segment_mask (np.ndarray): Binary matrix of shape (n_channels, n_sec * window_s) where 1 indicates
+                                   the presence of a stimulation artifact in given window.
 
     Returns:
         np.ndarray: EEG signal with artifact segments replaced by NaN.

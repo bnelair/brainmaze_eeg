@@ -250,10 +250,3 @@ def test_detection_dilatation():
     det_matrix_extend = detection_dilatation(det_matrix, extend_left=2, extend_right=2)
     assert np.all(np.sum(det_matrix_extend, axis=1) == 8)
 
-
-
-
-
-
-
-
