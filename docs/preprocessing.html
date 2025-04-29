@@ -36,7 +36,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=67ce15f2"></script>
+    <script src="_static/documentation_options.js?v=a7973028"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
@@ -370,134 +370,167 @@ document.write(`
 <span id="preprocessing"></span><h1>Preprocessing<a class="headerlink" href="#module-brainmaze_eeg.preprocessing" title="Link to this heading">#</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="brainmaze_eeg.preprocessing.channel_data_rate_thresholding">
-<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.preprocessing.</span></span><span class="sig-name descname"><span class="pre">channel_data_rate_thresholding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_rate_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.preprocessing.channel_data_rate_thresholding" title="Link to this definition">#</a></dt>
-<dd><p>Masks the whole channel [nchans, nsamples] with nans if the channel data rate is below the threshold.</p>
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.preprocessing.</span></span><span class="sig-name descname"><span class="pre">channel_data_rate_thresholding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold_data_rate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.preprocessing.channel_data_rate_thresholding" title="Link to this definition">#</a></dt>
+<dd><p>Masks entire channels (sets to NaN) based on data availability.</p>
+<p>Assesses the proportion of non-NaN values (data rate) for each channel. Channels
+with a data rate at or below the specified <cite>threshold_data_rate</cite> are fully
+masked, resulting in the output signal having those channels entirely as NaN.
+This filters out channels with excessive missing data for quality control.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<em>np.ndarray</em>) – Input signal, either 1D or 2D array.</p></li>
-<li><p><strong>dr_threshold</strong> (<em>float</em><em>, </em><em>optional</em>) – Drop rate threshold for masking. Default is 0.1.</p></li>
+<li><p><strong>x</strong> (<em>np.ndarray</em>) – Input signal array, expected to be [n_channels, n_samples] or [n_samples].
+May contain NaN values.</p></li>
+<li><p><strong>threshold_data_rate</strong> (<em>float</em><em>, </em><em>optional</em>) – Minimum acceptable proportion of non-NaNs
+for a channel to be kept. Channels &lt;= this rate are masked. Default is 0.1.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Signal with masked values replaced by NaNs.</p>
+<dd class="field-even"><p><dl class="simple">
+<dt>The input signal with channels below the data rate threshold</dt><dd><p>set entirely to NaN. Shape is the same as the input (or the original
+1D shape if input was 1D).</p>
+</dd>
+</dl>
+</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>np.ndarray</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> – If the input signal is not 1D or 2D.</p>
+<dd class="field-even"><p><strong>ValueError</strong> – If input is not 1D or 2D.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="brainmaze_eeg.preprocessing.detect_flat_line_segments">
-<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.preprocessing.</span></span><span class="sig-name descname"><span class="pre">detect_flat_line_segments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detection_window</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5e-07</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.preprocessing.detect_flat_line_segments" title="Link to this definition">#</a></dt>
-<dd><p>Detects flat-line segments in the input signal. A flat-line segment is identified when the mean absolute
-difference of the signal within a detection window is below a specified threshold.  It
-drops the last segment if ndarray shape is not a multiple of whole seconds.</p>
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.preprocessing.</span></span><span class="sig-name descname"><span class="pre">detect_flat_line_segments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5e-07</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.preprocessing.detect_flat_line_segments" title="Link to this definition">#</a></dt>
+<dd><p>Detects flat-line segments in the signal based on low variability.</p>
+<p>Identifies periods where the signal is constant by checking if the mean
+absolute difference within short segments falls below a threshold. Operates
+on segments. Returns a boolean mask indicating flagged segments.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<em>np.ndarray</em>) – Input signal, either 1D or 2D array.</p></li>
-<li><p><strong>fs</strong> (<em>float</em>) – Sampling frequency.</p></li>
-<li><p><strong>detection_window</strong> (<em>float</em>) – Length of the segment in seconds. Default is 0.5 seconds.</p></li>
-<li><p><strong>threshold</strong> (<em>float</em>) – Threshold for detecting flat-line segments. Default is 0.5e-6.</p></li>
+<li><p><strong>x</strong> (<em>np.ndarray</em>) – Input signal [n_channels, n_samples] or [n_samples], can have NaNs.</p></li>
+<li><p><strong>fs</strong> (<em>float</em>) – Sampling frequency (Hz).</p></li>
+<li><p><strong>window_s</strong> (<em>float</em><em>, </em><em>optional</em>) – Analysis window duration in seconds. Default is 0.5.</p></li>
+<li><p><strong>threshold</strong> (<em>float</em><em>, </em><em>optional</em>) – Threshold for mean absolute difference to flag flat-line. Default is 0.5e-6.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Boolean array indicating the presence of flat-line segments for each detection window.</p>
+<dd class="field-even"><p><dl class="simple">
+<dt>Boolean mask [n_channels, n_segments] or [n_segments]. True indicates</dt><dd><p>a flat-line detected in that specific segment and channel.</p>
+</dd>
+</dl>
+</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>np.ndarray</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> – If the input signal is not 1D or 2D.</p>
+<dd class="field-even"><p><strong>ValueError</strong> – If input is not 1D or 2D.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="brainmaze_eeg.preprocessing.detect_outlier_segments">
-<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.preprocessing.</span></span><span class="sig-name descname"><span class="pre">detect_outlier_segments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detection_window</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.preprocessing.detect_outlier_segments" title="Link to this definition">#</a></dt>
-<dd><p>Detects outlier noise in the input signal based on a threshold. The function evaluates the signal’s deviation
-from the mean and identifies segments with excessive noise. It drops the last segment if ndarray shape
-is not a multiple of whole seconds.</p>
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.preprocessing.</span></span><span class="sig-name descname"><span class="pre">detect_outlier_segments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.preprocessing.detect_outlier_segments" title="Link to this definition">#</a></dt>
+<dd><p>Detects time segments containing amplitude outliers.</p>
+<p>Identifies segments with sudden, large amplitude deflections by applying
+a robust percentile-based threshold to the signal within short time windows.
+Segments where samples exceed the threshold are flagged. Operates on segments.
+Returns a boolean mask indicating flagged segments.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<em>np.ndarray</em>) – Input signal, either 1D or 2D array.</p></li>
-<li><p><strong>fs</strong> (<em>float</em>) – Sampling frequency.</p></li>
-<li><p><strong>detection_window</strong> (<em>float</em>) – Length of the segment in seconds. Default is 0.5 seconds.</p></li>
-<li><p><strong>threshold</strong> (<em>float</em>) – Threshold for detecting outliers. Default is 10.</p></li>
+<li><p><strong>x</strong> (<em>np.ndarray</em>) – Input signal [n_channels, n_samples] or [n_samples], can have NaNs.</p></li>
+<li><p><strong>fs</strong> (<em>float</em>) – Sampling frequency (Hz).</p></li>
+<li><p><strong>window_s</strong> (<em>float</em><em>, </em><em>optional</em>) – Analysis window duration in seconds. Default is 0.5.</p></li>
+<li><p><strong>threshold</strong> (<em>float</em><em>, </em><em>optional</em>) – Multiplier for percentile range to set threshold. Default is 10.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Boolean array indicating the presence of outlier noise for each segment.</p>
+<dd class="field-even"><p><dl class="simple">
+<dt>Boolean mask [n_channels, n_segments] or [n_segments]. True indicates</dt><dd><p>amplitude outliers detected in that specific segment and channel.</p>
+</dd>
+</dl>
+</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>np.ndarray</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> – If the input signal is not 1D or 2D.</p>
+<dd class="field-even"><p><strong>ValueError</strong> – If input is not 1D or 2D.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="brainmaze_eeg.preprocessing.detect_powerline_segments">
-<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.preprocessing.</span></span><span class="sig-name descname"><span class="pre">detect_powerline_segments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detection_window</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">powerline_freq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold_ratio</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.preprocessing.detect_powerline_segments" title="Link to this definition">#</a></dt>
-<dd><p>Detects Powerline noise in the input signal using. Detection evaluates the power in the spectrum at
-powerline and its harmonics to the average power of the iEEG in 2 Hz - 40 Hz band. It
-drops the last segment if ndarray shape is not a multiple of whole seconds.</p>
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.preprocessing.</span></span><span class="sig-name descname"><span class="pre">detect_powerline_segments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">powerline_freq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.preprocessing.detect_powerline_segments" title="Link to this definition">#</a></dt>
+<dd><p>Detects time segments within each channel affected by powerline noise.</p>
+<p>Identifies segments by analyzing the spectral power ratio between the powerline
+frequency/harmonics and the 2-40Hz band within short time windows. Segments
+where this ratio exceeds a specified threshold are flagged. Operates on
+segments; drops partial segments at the end. Returns a boolean mask.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<em>np.ndarray</em>) – Input signal, either 1D or 2D array.</p></li>
-<li><p><strong>fs</strong> (<em>float</em>) – Sampling frequency.</p></li>
-<li><p><strong>detection_window</strong> (<em>float</em>) – Length of the segment in seconds. Default is 0.5 seconds.</p></li>
-<li><p><strong>powerline_freq</strong> (<em>float</em>) – Frequency of the powerline noise. Default is 60 Hz.</p></li>
-<li><p><strong>threshold_ratio</strong> (<em>float</em>) – Threshold ratio for detection how many times the power of the powerline noise is higher than average power in 2 Hz - 40 Hz band. Default is 1000.</p></li>
+<li><p><strong>x</strong> (<em>np.ndarray</em>) – Input signal [n_channels, n_samples] or [n_samples], can have NaNs.</p></li>
+<li><p><strong>fs</strong> (<em>float</em>) – Sampling frequency (Hz).</p></li>
+<li><p><strong>window_s</strong> (<em>float</em><em>, </em><em>optional</em>) – Analysis window duration in seconds. Default is 0.5.</p></li>
+<li><p><strong>powerline_freq</strong> (<em>float</em><em>, </em><em>optional</em>) – Fundamental powerline frequency. Harmonics also checked. Default is 60 Hz.</p></li>
+<li><p><strong>threshold</strong> (<em>float</em><em>, </em><em>optional</em>) – Power ratio threshold for flagging segments. Default is 1000.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Boolean array indicating the presence of powerline noise for every 1 second segment.</p>
+<dd class="field-even"><p><dl class="simple">
+<dt>Boolean mask [n_channels, n_segments] or [n_segments]. True indicates</dt><dd><p>powerline noise detected in that specific segment and channel.</p>
+</dd>
+</dl>
+</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>np.ndarray</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If input is not 1D or 2D.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="brainmaze_eeg.preprocessing.detect_stim_segments">
-<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.preprocessing.</span></span><span class="sig-name descname"><span class="pre">detect_stim_segments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detection_window</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detection_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq_band</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(80,</span> <span class="pre">110)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.preprocessing.detect_stim_segments" title="Link to this definition">#</a></dt>
-<dd><p>Detects stimulation artifacts in the input signal. Calculates differential signal of the input signal.
-Spectral power of the differential signal between the bands provided in frequency band is
-thresholded  for each detection window.</p>
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.preprocessing.</span></span><span class="sig-name descname"><span class="pre">detect_stim_segments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq_band</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(80,</span> <span class="pre">110)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.preprocessing.detect_stim_segments" title="Link to this definition">#</a></dt>
+<dd><p>Detects stimulation artifacts using spectral analysis of the difference signal.</p>
+<p>Identifies artifacts by checking for high spectral power in a specific
+high-frequency band (e.g., 80-110 Hz) within short time windows of the
+signal’s derivative. Operates on segments, drops partial end segments.
+Returns a boolean mask of detected segments and the calculated power sums.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<em>np.ndarray</em>) – Input signal, either 1D or 2D array.</p></li>
-<li><p><strong>fs</strong> (<em>float</em>) – Sampling frequency.</p></li>
-<li><p><strong>detection_window</strong> (<em>float</em>) – Length of the segment in seconds. Default is 1 second.</p></li>
-<li><p><strong>detection_threshold</strong> (<em>float</em>) – Threshold for detecting stimulation artifacts. Default is 2000.</p></li>
-<li><p><strong>freq_band</strong> (<em>tuple</em>) – Frequency band to consider for artifact detection (low, high). Default is (80, 110).</p></li>
+<li><p><strong>x</strong> (<em>np.ndarray</em>) – Input signal [n_channels, n_samples] or [n_samples], can have NaNs.</p></li>
+<li><p><strong>fs</strong> (<em>float</em>) – Sampling frequency (Hz).</p></li>
+<li><p><strong>window_s</strong> (<em>float</em><em>, </em><em>optional</em>) – Analysis window duration in seconds. Default is 1.</p></li>
+<li><p><strong>threshold</strong> (<em>float</em><em>, </em><em>optional</em>) – Power sum threshold for flagging artifacts. Default is 2000.</p></li>
+<li><p><strong>freq_band</strong> (<em>tuple</em><em>, </em><em>optional</em>) – Frequency range (low, high in Hz) for artifact power check. Default is (80, 110).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p>np.ndarray: Boolean array indicating the presence of stimulation artifacts for each detection window.</p></li>
-<li><p>np.ndarray: Spectral power within the specified frequency band for each detection window.</p></li>
+<li><p>detected_stim (np.ndarray): Boolean mask [n_channels, n_segments] or [n_segments]. True indicates artifact detected.</p></li>
+<li><p>psd_sum (np.ndarray): Sum of spectral power in <cite>freq_band</cite> per segment/channel.</p></li>
 </ul>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>tuple</p>
+<dd class="field-odd"><p>tuple[np.ndarray, np.ndarray]</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> – If the input signal is not 1D or 2D.</p>
+<dd class="field-even"><p><strong>ValueError</strong> – If input is not 1D or 2D.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -505,56 +538,89 @@ thresholded  for each detection window.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="brainmaze_eeg.preprocessing.detection_dilatation">
 <span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.preprocessing.</span></span><span class="sig-name descname"><span class="pre">detection_dilatation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extend_left</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extend_right</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.preprocessing.detection_dilatation" title="Link to this definition">#</a></dt>
-<dd><p>Extends True values in a boolean mask by a fixed number of positions to the left and right.</p>
+<dd><p>Expands detected regions in a boolean/integer mask using binary dilation.</p>
+<p>Applies binary dilation to a mask, effectively widening the regions marked
+as True (or 1) by a specified number of positions to the left and right.
+This is useful post-detection to add a buffer around flagged segments,
+accounting for potential edge effects. Returns the expanded mask.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>mask</strong> (<em>np.ndarray</em>) – 1D or 2D boolean array indicating detection.</p></li>
-<li><p><strong>extend_left</strong> (<em>int</em>) – Number of positions to extend left of each detection.</p></li>
-<li><p><strong>extend_right</strong> (<em>int</em>) – Number of positions to extend right of each detection.</p></li>
+<li><p><strong>mask</strong> (<em>np.ndarray</em>) – 1D or 2D boolean/int mask [n_channels, n_segments] or [n_segments]. True/1 indicates detection.</p></li>
+<li><p><strong>extend_left</strong> (<em>int</em><em>, </em><em>optional</em>) – Positions to extend the True region to the left. Default is 2.</p></li>
+<li><p><strong>extend_right</strong> (<em>int</em><em>, </em><em>optional</em>) – Positions to extend the True region to the right. Default is 2.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Extended boolean mask with same shape.</p>
+<dd class="field-even"><p>The expanded boolean mask (as int 0/1). Same shape as input.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>np.ndarray</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> – If the input signal is not 1D or 2D.</p>
+<dd class="field-even"><p><strong>ValueError</strong> – If input mask is not 1D or 2D.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="brainmaze_eeg.preprocessing.filter_powerline">
-<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.preprocessing.</span></span><span class="sig-name descname"><span class="pre">filter_powerline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frequency_powerline</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">60</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.preprocessing.filter_powerline" title="Link to this definition">#</a></dt>
-<dd><p>Filters powerline noise from the input signal using a notch filter. The function replaces NaN values with the
-median and returns nan values after filtering. This can possibly cause ringing around artifacts and edges.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="brainmaze_eeg.preprocessing.mask_segments_with_nans">
-<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.preprocessing.</span></span><span class="sig-name descname"><span class="pre">mask_segments_with_nans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">segment_mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">segment_len_s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.preprocessing.mask_segments_with_nans" title="Link to this definition">#</a></dt>
-<dd><p>Masks EEG signal segments based on provided mask setting them to NaN.</p>
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.preprocessing.</span></span><span class="sig-name descname"><span class="pre">filter_powerline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">powerline_freq</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">60</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.preprocessing.filter_powerline" title="Link to this definition">#</a></dt>
+<dd><p>Removes powerline noise using a notch filter and handles NaNs.</p>
+<p>Applies a notch filter at the specified powerline frequency. Handles NaNs
+by temporarily imputing with the median before filtering and then restoring
+the original NaN locations in the output. Note potential ringing artifacts
+near original NaN gaps or sharp signal transitions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<em>np.ndarray</em>) – 1D or 2D array of EEG data with shape (n_channels, n_samples).</p></li>
-<li><p><strong>fs</strong> (<em>int</em>) – Sampling rate of the EEG signal in Hz.</p></li>
-<li><p><strong>segment_len_s</strong> (<em>int</em>) – Duration of each segment in seconds.</p></li>
-<li><p><strong>segment_mask</strong> (<em>np.ndarray</em>) – Binary matrix of shape (n_channels, n_sec) where 1 indicates
-the presence of a stimulation artifact in that second.</p></li>
+<li><p><strong>x</strong> (<em>np.ndarray</em>) – Input signal [n_channels, n_samples] or [n_samples], can have NaNs.</p></li>
+<li><p><strong>fs</strong> (<em>float</em>) – Sampling frequency (Hz).</p></li>
+<li><p><strong>powerline_freq</strong> (<em>float</em><em>, </em><em>optional</em>) – Frequency of noise to remove. Default is 60 Hz.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>EEG signal with artifact segments replaced by NaN.</p>
+<dd class="field-even"><p><dl class="simple">
+<dt>Filtered signal with powerline noise attenuated. Original NaN</dt><dd><p>locations are preserved. Same shape as input.</p>
+</dd>
+</dl>
+</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>np.ndarray</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> – If the input signal is not 1D or 2D.</p>
+<dd class="field-even"><p><strong>ValueError</strong> – If input is not 1D or 2D.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="brainmaze_eeg.preprocessing.mask_segments_with_nans">
+<span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.preprocessing.</span></span><span class="sig-name descname"><span class="pre">mask_segments_with_nans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">segment_mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">segment_len_s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.preprocessing.mask_segments_with_nans" title="Link to this definition">#</a></dt>
+<dd><p>Masks (sets to NaN) signal segments specified by a boolean mask.</p>
+<p>Applies a pre-computed boolean/integer mask to set corresponding time
+segments in the signal to NaN. Converts segment indices from the mask
+to sample indices to apply masking. Returns a copy of the input signal
+with artifactual segments replaced by NaN.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>np.ndarray</em>) – Input signal [n_channels, n_samples] or [n_samples].</p></li>
+<li><p><strong>segment_mask</strong> (<em>np.ndarray</em>) – Boolean/int mask [n_channels, n_segments] or [n_segments].
+True/1 flags segments to mask.</p></li>
+<li><p><strong>fs</strong> (<em>float</em>) – Sampling frequency (Hz).</p></li>
+<li><p><strong>segment_len_s</strong> (<em>float</em>) – Duration of each segment in seconds, matches mask resolution.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Copy of input signal with specified segments replaced by NaN. Same shape.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If input is not 1D/2D or mask dimension mismatch.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -562,27 +628,27 @@ the presence of a stimulation artifact in that second.</p></li>
 <dl class="py function">
 <dt class="sig sig-object py" id="brainmaze_eeg.preprocessing.replace_nans_with_median">
 <span class="sig-prename descclassname"><span class="pre">brainmaze_eeg.preprocessing.</span></span><span class="sig-name descname"><span class="pre">replace_nans_with_median</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dtype</span><span class="p"><span class="pre">[</span></span><span class="pre">float64</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#brainmaze_eeg.preprocessing.replace_nans_with_median" title="Link to this definition">#</a></dt>
-<dd><p>Replaces NaN values in the input signal with the median of the non-NaN values along each channel.</p>
+<dd><p>Imputes NaN values per channel with the median of valid data.</p>
+<p>Replaces NaN values by computing the median of non-NaNs for each channel
+independently and filling the NaNs with this channel-specific median.
+This provides a robust way to fill missing data points. Returns the
+processed signal and a boolean mask indicating the original NaN locations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>x</strong> (<em>np.ndarray</em>) – Input signal, either 1D or 2D array.</p>
+<dd class="field-odd"><p><strong>x</strong> (<em>np.ndarray</em>) – Input signal array [n_channels, n_samples] or [n_samples], can have NaNs.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>A tuple containing:</dt><dd><ul class="simple">
-<li><p>processed_signal (np.ndarray): Signal with NaN values replaced by the median.</p></li>
-<li><p>data_rate (np.ndarray): Data rate for each channel, calculated as the proportion of non-NaN values.</p></li>
-<li><p>mask (np.ndarray): Boolean mask indicating the positions of NaN values in the original signal.</p></li>
+<dd class="field-even"><p><ul class="simple">
+<li><p>processed_signal (np.ndarray): Signal with NaNs replaced by channel medians.</p></li>
+<li><p>mask (np.ndarray): Boolean mask where True indicates original NaN positions.</p></li>
 </ul>
-</dd>
-</dl>
 </p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Tuple[np.ndarray, np.ndarray, np.ndarray]</p>
+<dd class="field-odd"><p>Tuple[np.ndarray, np.ndarray]</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> – If the input signal is not 1D or 2D.</p>
+<dd class="field-even"><p><strong>ValueError</strong> – If input is not 1D or 2D.</p>
 </dd>
 </dl>
 </dd></dl>

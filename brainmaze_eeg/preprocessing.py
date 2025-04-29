@@ -7,19 +7,28 @@ from scipy.ndimage import binary_dilation
 from brainmaze_utils.signal import PSD, buffer
 
 
-def channel_data_rate_thresholding(x: np.typing.NDArray[np.float64], data_rate_threshold: float=0.1):
+def channel_data_rate_thresholding(x: np.typing.NDArray[np.float64], threshold_data_rate: float=0.1):
     """
-    Masks the whole channel [nchans, nsamples] with nans if the channel data rate is below the threshold.
+    Masks entire channels (sets to NaN) based on data availability.
+
+    Assesses the proportion of non-NaN values (data rate) for each channel. Channels
+    with a data rate at or below the specified `threshold_data_rate` are fully
+    masked, resulting in the output signal having those channels entirely as NaN.
+    This filters out channels with excessive missing data for quality control.
 
     Parameters:
-        x (np.ndarray): Input signal, either 1D or 2D array.
-        dr_threshold (float, optional): Drop rate threshold for masking. Default is 0.1.
+        x (np.ndarray): Input signal array, expected to be [n_channels, n_samples] or [n_samples].
+                        May contain NaN values.
+        threshold_data_rate (float, optional): Minimum acceptable proportion of non-NaNs
+            for a channel to be kept. Channels <= this rate are masked. Default is 0.1.
 
     Returns:
-        np.ndarray: Signal with masked values replaced by NaNs.
+        np.ndarray: The input signal with channels below the data rate threshold
+            set entirely to NaN. Shape is the same as the input (or the original
+            1D shape if input was 1D).
 
     Raises:
-        ValueError: If the input signal is not 1D or 2D.
+        ValueError: If input is not 1D or 2D.
     """
 
     ndim = x.ndim
@@ -30,7 +39,7 @@ def channel_data_rate_thresholding(x: np.typing.NDArray[np.float64], data_rate_t
     if x.ndim == 1:
         x = x[np.newaxis, :]  # Add a new axis to make it 2D
 
-    ch_mask = 1 - (np.isnan(x).sum(axis=1) / x.shape[1]) <= data_rate_threshold
+    ch_mask = 1 - (np.isnan(x).sum(axis=1) / x.shape[1]) <= threshold_data_rate
     x[ch_mask, :] = np.nan
 
     if ndim == 1:
@@ -41,19 +50,23 @@ def channel_data_rate_thresholding(x: np.typing.NDArray[np.float64], data_rate_t
 
 def replace_nans_with_median(x: np.typing.NDArray[np.float64]):
     """
-    Replaces NaN values in the input signal with the median of the non-NaN values along each channel.
+    Imputes NaN values per channel with the median of valid data.
+
+    Replaces NaN values by computing the median of non-NaNs for each channel
+    independently and filling the NaNs with this channel-specific median.
+    This provides a robust way to fill missing data points. Returns the
+    processed signal and a boolean mask indicating the original NaN locations.
 
     Parameters:
-        x (np.ndarray): Input signal, either 1D or 2D array.
+        x (np.ndarray): Input signal array [n_channels, n_samples] or [n_samples], can have NaNs.
 
     Returns:
-        Tuple[np.ndarray, np.ndarray, np.ndarray]: A tuple containing:
-            - processed_signal (np.ndarray): Signal with NaN values replaced by the median.
-            - data_rate (np.ndarray): Data rate for each channel, calculated as the proportion of non-NaN values.
-            - mask (np.ndarray): Boolean mask indicating the positions of NaN values in the original signal.
+        Tuple[np.ndarray, np.ndarray]:
+            - processed_signal (np.ndarray): Signal with NaNs replaced by channel medians.
+            - mask (np.ndarray): Boolean mask where True indicates original NaN positions.
 
     Raises:
-        ValueError: If the input signal is not 1D or 2D.
+        ValueError: If input is not 1D or 2D.
     """
 
     ndim = x.ndim
@@ -82,11 +95,26 @@ def replace_nans_with_median(x: np.typing.NDArray[np.float64]):
     return x, mask
 
 
-def filter_powerline(x: np.typing.NDArray[np.float64], fs: float, frequency_powerline: float=60):
+def filter_powerline(x: np.typing.NDArray[np.float64], fs: float, powerline_freq: float=60):
     """
-    Filters powerline noise from the input signal using a notch filter. The function replaces NaN values with the
-    median and returns nan values after filtering. This can possibly cause ringing around artifacts and edges.
+    Removes powerline noise using a notch filter and handles NaNs.
 
+    Applies a notch filter at the specified powerline frequency. Handles NaNs
+    by temporarily imputing with the median before filtering and then restoring
+    the original NaN locations in the output. Note potential ringing artifacts
+    near original NaN gaps or sharp signal transitions.
+
+    Parameters:
+        x (np.ndarray): Input signal [n_channels, n_samples] or [n_samples], can have NaNs.
+        fs (float): Sampling frequency (Hz).
+        powerline_freq (float, optional): Frequency of noise to remove. Default is 60 Hz.
+
+    Returns:
+        np.ndarray: Filtered signal with powerline noise attenuated. Original NaN
+            locations are preserved. Same shape as input.
+
+    Raises:
+        ValueError: If input is not 1D or 2D.
     """
     # substitute nans with median for 60Hz notch filter
 
@@ -100,7 +128,7 @@ def filter_powerline(x: np.typing.NDArray[np.float64], fs: float, frequency_powe
     mask = np.isnan(x)
     x = np.where(mask, np.nanmedian(x, axis=1, keepdims=True), x)
 
-    b, a = signal.iirnotch(w0=frequency_powerline, Q=10, fs=fs)
+    b, a = signal.iirnotch(w0=powerline_freq, Q=10, fs=fs)
     x = signal.filtfilt(b, a, x, axis=1)
 
     x[mask] = np.nan
@@ -114,25 +142,31 @@ def filter_powerline(x: np.typing.NDArray[np.float64], fs: float, frequency_powe
 def detect_powerline_segments(
         x: np.typing.NDArray[np.float64],
         fs: float,
-        detection_window: float = 0.5,
+        window_s: float = 0.5,
         powerline_freq:float = 60,
-        threshold_ratio:float = 1000
+        threshold:float = 1000
 ):
     """
-    Detects Powerline noise in the input signal using. Detection evaluates the power in the spectrum at
-    powerline and its harmonics to the average power of the iEEG in 2 Hz - 40 Hz band. It
-    drops the last segment if ndarray shape is not a multiple of whole seconds.
+    Detects time segments within each channel affected by powerline noise.
+
+    Identifies segments by analyzing the spectral power ratio between the powerline
+    frequency/harmonics and the 2-40Hz band within short time windows. Segments
+    where this ratio exceeds a specified threshold are flagged. Operates on
+    segments; drops partial segments at the end. Returns a boolean mask.
 
     Parameters:
-        x (np.ndarray): Input signal, either 1D or 2D array.
-        fs (float): Sampling frequency.
-        detection_window (float): Length of the segment in seconds. Default is 0.5 seconds.
-        powerline_freq (float): Frequency of the powerline noise. Default is 60 Hz.
-        threshold_ratio (float): Threshold ratio for detection how many times the power of the powerline noise is higher than average power in 2 Hz - 40 Hz band. Default is 1000.
+        x (np.ndarray): Input signal [n_channels, n_samples] or [n_samples], can have NaNs.
+        fs (float): Sampling frequency (Hz).
+        window_s (float, optional): Analysis window duration in seconds. Default is 0.5.
+        powerline_freq (float, optional): Fundamental powerline frequency. Harmonics also checked. Default is 60 Hz.
+        threshold (float, optional): Power ratio threshold for flagging segments. Default is 1000.
 
     Returns:
-        np.ndarray: Boolean array indicating the presence of powerline noise for every 1 second segment.
+        np.ndarray: Boolean mask [n_channels, n_segments] or [n_segments]. True indicates
+            powerline noise detected in that specific segment and channel.
 
+    Raises:
+        ValueError: If input is not 1D or 2D.
     """
 
 
@@ -144,7 +178,7 @@ def detect_powerline_segments(
         x = x[np.newaxis, :]
 
     xb =  np.array([
-        buffer(x_, fs, segm_size=detection_window, drop=True) for x_ in x
+        buffer(x_, fs, segm_size=window_s, drop=True) for x_ in x
     ])
     xb = xb - np.nanmean(xb, axis=2, keepdims=True)
     f, pxx = PSD(xb, fs)
@@ -164,7 +198,7 @@ def detect_powerline_segments(
     pow_rat = pow_pline / pow_40
 
     pow_rat = pow_rat.squeeze(axis=2)
-    detected_noise = pow_rat >= threshold_ratio
+    detected_noise = pow_rat >= threshold
 
     if ndim == 1:
         detected_noise = detected_noise[0]
@@ -175,25 +209,29 @@ def detect_powerline_segments(
 def detect_outlier_segments(
         x: np.typing.NDArray[np.float64],
         fs: float,
-        detection_window: float = 0.5,
+        window_s: float = 0.5,
         threshold: float = 10
 ):
     """
-    Detects outlier noise in the input signal based on a threshold. The function evaluates the signal's deviation
-    from the mean and identifies segments with excessive noise. It drops the last segment if ndarray shape
-    is not a multiple of whole seconds.
+    Detects time segments containing amplitude outliers.
+
+    Identifies segments with sudden, large amplitude deflections by applying
+    a robust percentile-based threshold to the signal within short time windows.
+    Segments where samples exceed the threshold are flagged. Operates on segments.
+    Returns a boolean mask indicating flagged segments.
 
     Parameters:
-        x (np.ndarray): Input signal, either 1D or 2D array.
-        fs (float): Sampling frequency.
-        detection_window (float): Length of the segment in seconds. Default is 0.5 seconds.
-        threshold (float): Threshold for detecting outliers. Default is 10.
+        x (np.ndarray): Input signal [n_channels, n_samples] or [n_samples], can have NaNs.
+        fs (float): Sampling frequency (Hz).
+        window_s (float, optional): Analysis window duration in seconds. Default is 0.5.
+        threshold (float, optional): Multiplier for percentile range to set threshold. Default is 10.
 
     Returns:
-        np.ndarray: Boolean array indicating the presence of outlier noise for each segment.
+        np.ndarray: Boolean mask [n_channels, n_segments] or [n_segments]. True indicates
+            amplitude outliers detected in that specific segment and channel.
 
     Raises:
-        ValueError: If the input signal is not 1D or 2D.
+        ValueError: If input is not 1D or 2D.
     """
 
     ndim = x.ndim
@@ -210,7 +248,7 @@ def detect_outlier_segments(
     b_idx = np.abs(x) > threshold_tukey[:, np.newaxis]
 
     detected_noise = np.array([
-        buffer(b_ch, fs, segm_size=detection_window, drop=True).sum(1) > 1 for b_ch in b_idx
+        buffer(b_ch, fs, segm_size=window_s, drop=True).sum(1) > 1 for b_ch in b_idx
     ])
 
     if ndim == 1:
@@ -221,26 +259,30 @@ def detect_outlier_segments(
 def detect_flat_line_segments(
         x: np.typing.NDArray[np.float64],
         fs: float,
-        detection_window:float = 0.5,
+        window_s:float = 0.5,
         threshold: float = 0.5e-6
 ):
     """
-    Detects flat-line segments in the input signal. A flat-line segment is identified when the mean absolute
-    difference of the signal within a detection window is below a specified threshold.  It
-    drops the last segment if ndarray shape is not a multiple of whole seconds.
+    Detects flat-line segments in the signal based on low variability.
+
+    Identifies periods where the signal is constant by checking if the mean
+    absolute difference within short segments falls below a threshold. Operates
+    on segments. Returns a boolean mask indicating flagged segments.
 
     Parameters:
-        x (np.ndarray): Input signal, either 1D or 2D array.
-        fs (float): Sampling frequency.
-        detection_window (float): Length of the segment in seconds. Default is 0.5 seconds.
-        threshold (float): Threshold for detecting flat-line segments. Default is 0.5e-6.
+        x (np.ndarray): Input signal [n_channels, n_samples] or [n_samples], can have NaNs.
+        fs (float): Sampling frequency (Hz).
+        window_s (float, optional): Analysis window duration in seconds. Default is 0.5.
+        threshold (float, optional): Threshold for mean absolute difference to flag flat-line. Default is 0.5e-6.
 
     Returns:
-        np.ndarray: Boolean array indicating the presence of flat-line segments for each detection window.
+        np.ndarray: Boolean mask [n_channels, n_segments] or [n_segments]. True indicates
+            a flat-line detected in that specific segment and channel.
 
     Raises:
-        ValueError: If the input signal is not 1D or 2D.
+        ValueError: If input is not 1D or 2D.
     """
+
     ndim = x.ndim
     if ndim == 0 or ndim > 2:
         raise ValueError("Input 'x' must be a 1D or nD numpy array.")
@@ -249,7 +291,7 @@ def detect_flat_line_segments(
         x = x[np.newaxis, :]
 
     xb = np.array([
-        buffer(x_, fs, segm_size=detection_window, drop=True) for x_ in x
+        buffer(x_, fs, segm_size=window_s, drop=True) for x_ in x
     ])
     detected_flat_line = np.abs(np.diff(xb, axis=2).mean(axis=2)) < threshold
 
@@ -259,28 +301,31 @@ def detect_flat_line_segments(
     return detected_flat_line
 
 
-def detect_stim_segments(x: np.typing.NDArray[np.float64], fs: float, detection_window:float = 1,
-                         detection_threshold:float = 2000, freq_band: Tuple[float, float] = (80, 110,)):
+def detect_stim_segments(x: np.typing.NDArray[np.float64], fs: float, window_s:float = 1,
+                         threshold:float = 2000, freq_band: Tuple[float, float] = (80, 110,)):
     """
-    Detects stimulation artifacts in the input signal. Calculates differential signal of the input signal.
-    Spectral power of the differential signal between the bands provided in frequency band is
-    thresholded  for each detection window.
+        Detects stimulation artifacts using spectral analysis of the difference signal.
 
-    Parameters:
-        x (np.ndarray): Input signal, either 1D or 2D array.
-        fs (float): Sampling frequency.
-        detection_window (float): Length of the segment in seconds. Default is 1 second.
-        detection_threshold (float): Threshold for detecting stimulation artifacts. Default is 2000.
-        freq_band (tuple): Frequency band to consider for artifact detection (low, high). Default is (80, 110).
+        Identifies artifacts by checking for high spectral power in a specific
+        high-frequency band (e.g., 80-110 Hz) within short time windows of the
+        signal's derivative. Operates on segments, drops partial end segments.
+        Returns a boolean mask of detected segments and the calculated power sums.
 
-    Returns:
-        tuple:
-            - np.ndarray: Boolean array indicating the presence of stimulation artifacts for each detection window.
-            - np.ndarray: Spectral power within the specified frequency band for each detection window.
+        Parameters:
+            x (np.ndarray): Input signal [n_channels, n_samples] or [n_samples], can have NaNs.
+            fs (float): Sampling frequency (Hz).
+            window_s (float, optional): Analysis window duration in seconds. Default is 1.
+            threshold (float, optional): Power sum threshold for flagging artifacts. Default is 2000.
+            freq_band (tuple, optional): Frequency range (low, high in Hz) for artifact power check. Default is (80, 110).
 
-    Raises:
-        ValueError: If the input signal is not 1D or 2D.
-    """
+        Returns:
+            tuple[np.ndarray, np.ndarray]:
+                - detected_stim (np.ndarray): Boolean mask [n_channels, n_segments] or [n_segments]. True indicates artifact detected.
+                - psd_sum (np.ndarray): Sum of spectral power in `freq_band` per segment/channel.
+
+        Raises:
+            ValueError: If input is not 1D or 2D.
+        """
     ndim = x.ndim
     if ndim == 0 or ndim > 2:
         raise ValueError("Input 'x' must be a 1D or nD numpy array.")
@@ -294,14 +339,14 @@ def detect_stim_segments(x: np.typing.NDArray[np.float64], fs: float, detection_
     )
 
     xb =  np.array([
-        buffer(x_, fs, segm_size=detection_window, drop=True) for x_ in x_diff
+        buffer(x_, fs, segm_size=window_s, drop=True) for x_ in x_diff
     ])
 
 
     freq, psd = PSD(xb, fs=fs)
     psd_hf = psd[:, :, (freq > freq_band[0]) & (freq < freq_band[1])]
     psd_sum = np.sum(psd_hf, axis=-1)
-    detected_stim = (psd_sum >= detection_threshold).astype(int)
+    detected_stim = (psd_sum >= threshold).astype(int)
 
     if ndim == 1:
         detected_stim = detected_stim[0]
@@ -313,21 +358,26 @@ def detect_stim_segments(x: np.typing.NDArray[np.float64], fs: float, detection_
 def mask_segments_with_nans(x: np.typing.NDArray[np.float64], segment_mask: np.typing.NDArray[np.float64],
                             fs: float, segment_len_s: float):
     """
-    Masks EEG signal segments based on provided mask setting them to NaN.
+        Masks (sets to NaN) signal segments specified by a boolean mask.
 
-    Parameters:
-        x (np.ndarray): 1D or 2D array of EEG data with shape (n_channels, n_samples).
-        fs (int): Sampling rate of the EEG signal in Hz.
-        segment_len_s (int): Duration of each segment in seconds.
-        segment_mask (np.ndarray): Binary matrix of shape (n_channels, n_sec) where 1 indicates
-                                       the presence of a stimulation artifact in that second.
+        Applies a pre-computed boolean/integer mask to set corresponding time
+        segments in the signal to NaN. Converts segment indices from the mask
+        to sample indices to apply masking. Returns a copy of the input signal
+        with artifactual segments replaced by NaN.
 
-    Returns:
-        np.ndarray: EEG signal with artifact segments replaced by NaN.
+        Parameters:
+            x (np.ndarray): Input signal [n_channels, n_samples] or [n_samples].
+            segment_mask (np.ndarray): Boolean/int mask [n_channels, n_segments] or [n_segments].
+                                       True/1 flags segments to mask.
+            fs (float): Sampling frequency (Hz).
+            segment_len_s (float): Duration of each segment in seconds, matches mask resolution.
 
-    Raises:
-        ValueError: If the input signal is not 1D or 2D.
-    """
+        Returns:
+            np.ndarray: Copy of input signal with specified segments replaced by NaN. Same shape.
+
+        Raises:
+            ValueError: If input is not 1D/2D or mask dimension mismatch.
+        """
     ndim = x.ndim
     if ndim == 0 or ndim > 2:
         raise ValueError("Input 'x' must be a 1D or nD numpy array.")
@@ -369,18 +419,23 @@ def mask_segments_with_nans(x: np.typing.NDArray[np.float64], segment_mask: np.t
 
 def detection_dilatation(mask: np.ndarray, extend_left: int = 2, extend_right: int = 2):
     """
-    Extends True values in a boolean mask by a fixed number of positions to the left and right.
+    Expands detected regions in a boolean/integer mask using binary dilation.
+
+    Applies binary dilation to a mask, effectively widening the regions marked
+    as True (or 1) by a specified number of positions to the left and right.
+    This is useful post-detection to add a buffer around flagged segments,
+    accounting for potential edge effects. Returns the expanded mask.
 
     Parameters:
-        mask (np.ndarray): 1D or 2D boolean array indicating detection.
-        extend_left (int): Number of positions to extend left of each detection.
-        extend_right (int): Number of positions to extend right of each detection.
+        mask (np.ndarray): 1D or 2D boolean/int mask [n_channels, n_segments] or [n_segments]. True/1 indicates detection.
+        extend_left (int, optional): Positions to extend the True region to the left. Default is 2.
+        extend_right (int, optional): Positions to extend the True region to the right. Default is 2.
 
     Returns:
-        np.ndarray: Extended boolean mask with same shape.
+        np.ndarray: The expanded boolean mask (as int 0/1). Same shape as input.
 
     Raises:
-        ValueError: If the input signal is not 1D or 2D.
+        ValueError: If input mask is not 1D or 2D.
     """
     total_extend = extend_left + extend_right + 1
     structure = np.ones(total_extend, dtype=int)
