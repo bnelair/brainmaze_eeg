@@ -7,11 +7,11 @@ sphinx_book_theme
 
 brainmaze_utils
 pytest
-numpy
-pandas
+numpy>=2.0.0
+pandas>=2.2.0
 pytz
 python-dateutil
-scikit-learn
+scikit-learn>=1.6.1
 scipy
 tqdm
 
