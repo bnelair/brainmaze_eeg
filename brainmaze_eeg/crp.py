@@ -148,7 +148,7 @@ def crp_method(v, t_win, prune_the_data):
             # Prune the data - rerun the CRP with only selected trials
             [crp_parameters, crp_projections] = crp_method(v[:, high_eps_indexes], t_win, False)
 
-    return crp_parameters, crp_projections
+    return crp_parameters, crp_projections, high_eps_indexes
 
 
 def ccep_proj(V):
