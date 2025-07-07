@@ -60,7 +60,7 @@ Example
     print(stats['delta_t_stats'])
 
 
-.. image:: ../../../img/wave_detection/1_det.png
+.. image:: ../../img/wave_detection/1_det.png
    :width: 300
 
 
